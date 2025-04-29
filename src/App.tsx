@@ -16,10 +16,10 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* --- 公開路由 --- */}
+        {/* --- 公開路徑 --- */}
         <Route path="/login" element={<LoginPage setToken={setToken} />} />
 
-        {/* --- 受保護路由，統一包在 Layout 內 --- */}
+        {/* --- 受保護路徑，統一包在 Layout 內 --- */}
         <Route element={<Protect element={<Layout />} />}>
           <Route path="/employee" element={<EmployeePage />} />
           <Route path="/leave" element={<LeavePage />} />
