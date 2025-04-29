@@ -1,54 +1,80 @@
-# React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Currently, two official plugins are available:
+# Attendance-System Frontend
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+這是一個使用 Vite + React 製作的前端專案，負責串接考勤管理系統的後端 API。
 
-## Expanding the ESLint configuration
+> 後端專案與資料庫 docker-compose 參見
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+> [Attendance-System-API](https://github.com/JunTingLin/Attendance-System-API)
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+> [Attendance-System-db](https://github.com/JunTingLin/Attendance-System-db)
+
+---
+
+## 專案結構說明
+
+```
+Attendance-System_frontend/
+├── public/                 
+├── src/
+│   ├── api/                 # API 呼叫函式
+│   ├── components/          # 公用元件 (ex: Layout側邊欄)
+│   ├── pages/               # 各個頁面
+│   ├── types/               # 類別定義 (ex: EmployeeDTO)
+│   ├── App.tsx              # 頁面路徑總入口
+│   └── main.tsx             # React 入口
+├── .env                     # 環境變數設定（開發完成才加入此檔案）
+├── package.json             # 專案設定與依賴
+├── tsconfig.json            # TypeScript 設定
+└── vite.config.ts           # Vite 設定
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 基本啟動指令
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+1. 安裝套件
+   ```bash
+   npm install
+   ```
+
+2. 啟動開發伺服器
+   
+   ```bash
+   npm run dev
+   ```
+3. (可選) 打包專案
+   
+   ```bash
+   npm run build
+   ```
+
+---
+
+## 頁面路徑設計
+
+| Path             | 對應頁面         | 是否需要登入 |
+| ---------------- | ---------------- | ------------ |
+| `/login`         | 登入頁面          | 否           |
+| `/employee`      | 員工資料頁        | 是           |
+| `/leave`         | 請假申請表        | 是           |
+| `/leave-manage`  | 假單管理          | 是           |
+
+- 如果尚未登入，訪問需要登入的頁面會自動跳轉到 `/login`。
+- 成功登入後會被導向 `/employee`。
+
+---
+
+## 注意事項
+
+- API 伺服器網址應該設定在 `.env` 裡（目前暫未使用此方式設置），例如：
+  ```bash
+  VITE_API_URL=http://localhost:8080
+  ```
+- 前端透過 `Authorization: Bearer {token}` 把登入後的 JWT token 加到每個 API 請求裡。
+- 頁面切換使用 `react-router-dom v6`，統一用 `<Routes>` 與 `<Route>` 配置。
+
+```
+
 ```
