@@ -14,17 +14,17 @@ function LoginPage({ setToken }: { setToken: (t: string) => void }) {
       const data = await login(employeeCode, password);
       localStorage.setItem('jwtToken', data.data.token);
       setToken(data.data.token);
-      navigate('/employee');
+      navigate('/main');
     } catch (error) {
       setErrorMsg('帳號或密碼錯誤，請再試一次');
     }
   };
 
   return (
-    <div style={{ 
+    <div style={{
       height: '100vh',
-      width: '100vw',                
-      backgroundColor: '#f8f9fa',     
+      width: '100vw',
+      backgroundColor: '#f8f9fa',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
@@ -42,9 +42,9 @@ function LoginPage({ setToken }: { setToken: (t: string) => void }) {
       }}>
         {/* Logo 區域 */}
         <div style={{ marginBottom: '1.5rem' }}>
-          <img 
-            src="https://img.icons8.com/fluency/48/checked--v1.png" 
-            alt="logo" 
+          <img
+            src="https://img.icons8.com/fluency/48/checked--v1.png"
+            alt="logo"
             style={{ marginBottom: '0.5rem' }}
           />
           <h2 style={{ margin: 0, fontSize: '1.2rem', color: '#0d6efd' }}>考勤管理系統</h2>
@@ -90,7 +90,7 @@ function LoginPage({ setToken }: { setToken: (t: string) => void }) {
         </div>
 
         {/* 登入按鈕 */}
-        <button 
+        <button
           onClick={handleLogin}
           style={{
             width: '100%',

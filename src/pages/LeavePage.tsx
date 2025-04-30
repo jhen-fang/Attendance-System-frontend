@@ -160,8 +160,9 @@ export default function LeavePage() {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Box sx={{ minHeight: '100vh', width: '100vw', backgroundColor: '#f6f8fa', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '1rem', boxSizing: 'border-box' }}>
-      <Box sx={{ width: '100%', maxWidth: 540, mx: 'auto', mt: 4, p: 3, backgroundColor: 'white', borderRadius: 2, boxShadow: 3 }}>
+      <Box sx={{ width: '100%', padding: '1rem', boxSizing: 'border-box', display: 'flex', justifyContent: 'center' }}>
+        <Box sx={{ width: '100%', maxWidth: '1200px', padding: 3, backgroundColor: 'white', borderRadius: 2, boxShadow: 3 }}>
+
         <Typography variant="h6" mb={2}>請假申請表</Typography>
 
         {errorMsg && <Alert severity="error" sx={{ mb: 2 }}>{errorMsg}</Alert>}

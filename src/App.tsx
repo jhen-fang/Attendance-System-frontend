@@ -5,6 +5,7 @@ import Layout from './components/Layout';
 import EmployeePage from './pages/EmployeePage';
 import LeavePage from './pages/LeavePage';
 import LeaveManage from './pages/LeaveManage';
+import MainPage from './pages/MainPage';
 
 function Protect({ element }: { element: ReactElement }) {
   return localStorage.getItem('jwtToken') ? element : <Navigate to="/login" replace />;
@@ -24,15 +25,16 @@ export default function App() {
           <Route path="/employee" element={<EmployeePage />} />
           <Route path="/leave" element={<LeavePage />} />
           <Route path="/leave-manage" element={<LeaveManage />} />
+          <Route path="/main" element={<MainPage />} />
           {/* 進入 / 時自動導到員工資料 */}
-          <Route index element={<Navigate to="/employee" replace />} />
+          <Route index element={<Navigate to="/main" replace />} />
         </Route>
 
         {/* 任何未知網址 → 依是否登入導向 */}
         <Route
           path="*"
           element={
-            token ? <Navigate to="/employee" replace /> : <Navigate to="/login" replace />
+            token ? <Navigate to="/main" replace /> : <Navigate to="/login" replace />
           }
         />
       </Routes>
