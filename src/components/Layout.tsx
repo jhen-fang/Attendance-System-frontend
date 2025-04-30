@@ -4,6 +4,7 @@ const menu = [
   { path: '/employee', label: '員工資料' },
   { path: '/leave', label: '請假頁面' },
   { path: '/leave-manage', label: '假單管理' },
+  { path: '/logout', label: '登出', isLogout: true },
 ];
 
 export default function Layout() {
@@ -27,7 +28,13 @@ export default function Layout() {
         {menu.map((m) => (
           <Link
             key={m.path}
-            to={m.path}
+            to={m.isLogout ? '#' : m.path}
+            onClick={() => {
+              if (m.isLogout) {
+                localStorage.removeItem('jwtToken');
+                window.location.href = '/login';
+              }
+            }}
             style={{
               display: 'block',
               padding: '0.6rem 0.8rem',
