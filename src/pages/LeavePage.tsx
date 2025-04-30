@@ -163,16 +163,16 @@ export default function LeavePage() {
       <Box sx={{ width: '100%', padding: '1rem', boxSizing: 'border-box', display: 'flex', justifyContent: 'center' }}>
         <Box sx={{ width: '100%', maxWidth: '1200px', padding: 3, backgroundColor: 'white', borderRadius: 2, boxShadow: 3 }}>
 
-        <Typography variant="h6" mb={2}>請假申請表</Typography>
+        <Typography variant="h6" color="text.primary" mb={2}>請假申請表</Typography>
 
         {errorMsg && <Alert severity="error" sx={{ mb: 2 }}>{errorMsg}</Alert>}
 
         <FormControl fullWidth size="small" sx={{ mb: 2 }}>
           <FormLabel>假別</FormLabel>
           <RadioGroup row value={leaveTypeId} onChange={(e) => setLeaveTypeId(Number(e.target.value))}>
-            <FormControlLabel value={1} control={<Radio />} label="特休" />
-            <FormControlLabel value={2} control={<Radio />} label="病假" />
-            <FormControlLabel value={3} control={<Radio />} label="事假" />
+            <FormControlLabel value={1} sx={{ color: 'text.primary' }} control={<Radio />} label="特休" />
+            <FormControlLabel value={2} sx={{ color: 'text.primary' }} control={<Radio />} label="病假" />
+            <FormControlLabel value={3} sx={{ color: 'text.primary' }} control={<Radio />} label="事假" />
           </RadioGroup>
         </FormControl>
 
@@ -198,7 +198,7 @@ export default function LeavePage() {
           </Select>
         </FormControl>
 
-        <Typography variant="body2" sx={{ mb: 2 }}>主管：{supervisor}</Typography>
+        <Typography variant="body2" color="text.primary" sx={{ mb: 2 }}>主管：{supervisor}</Typography>
 
         <FormLabel>請假事由</FormLabel>
         <TextField value={reason} onChange={(e) => setReason(e.target.value)} fullWidth multiline rows={3} size="small" sx={{ mb: 2, mt: 0.5 }} />

@@ -84,7 +84,7 @@ export default function MainPage() {
         <Box sx={{ width: '100%', maxWidth: '1200px', padding: 3, backgroundColor: 'white', borderRadius: 2, boxShadow: 3 }}>
 
 
-          <Typography variant="h6" gutterBottom>
+          <Typography variant="h6" color="text.primary" gutterBottom>
             剩餘假期：
           </Typography>
           <Grid container spacing={2}>
@@ -98,7 +98,7 @@ export default function MainPage() {
             ))}
           </Grid>
 
-          <Typography variant="h6" sx={{ mt: 4 }} gutterBottom>
+          <Typography variant="h6" color="text.primary" sx={{ mt: 4 }} gutterBottom>
             請假歷史：
           </Typography>
 
