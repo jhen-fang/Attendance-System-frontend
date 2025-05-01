@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import LeaveDetailDialog from './LeaveDetailDialog';
 import {
   Box, Typography, Grid, Paper, Table, TableBody, TableCell,
   TableContainer, TableHead, TableRow, Chip, Link, Tooltip, FormControl,
@@ -48,6 +49,8 @@ export default function MainPage() {
   const [history, setHistory] = useState<any[]>([]);
   const [leaveFilter, setLeaveFilter] = useState('ALL');
   const [statusFilter, setStatusFilter] = useState('ALL');
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -135,57 +138,77 @@ export default function MainPage() {
           </Grid>
 
           <TableContainer component={Paper}>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell sx={{ whiteSpace: 'nowrap' }}>申請時間</TableCell>
-                  <TableCell sx={{ whiteSpace: 'nowrap' }}>假別</TableCell>
-                  <TableCell sx={{ whiteSpace: 'nowrap' }}>審核時間</TableCell>
-                  <TableCell sx={{ whiteSpace: 'nowrap' }}>請假時間</TableCell>
-                  <TableCell sx={{ whiteSpace: 'nowrap' }}>結束時間</TableCell>
-                  <TableCell sx={{ whiteSpace: 'nowrap' }}>請假時數</TableCell>
-                  <TableCell sx={{ whiteSpace: 'nowrap' }}>請假原因</TableCell>
-                  <TableCell sx={{ whiteSpace: 'nowrap' }}>主管留言</TableCell>
-                  <TableCell sx={{ whiteSpace: 'nowrap' }}>代理人員編</TableCell>
-                  <TableCell sx={{ whiteSpace: 'nowrap' }}>代理人姓名</TableCell>
-                  <TableCell sx={{ whiteSpace: 'nowrap' }}>附件</TableCell>
-                  <TableCell sx={{ whiteSpace: 'nowrap' }}>申請狀態</TableCell>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{ whiteSpace: 'nowrap' }}>申請時間</TableCell>
+                <TableCell sx={{ whiteSpace: 'nowrap' }}>假別</TableCell>
+                <TableCell sx={{ whiteSpace: 'nowrap' }}>審核時間</TableCell>
+                <TableCell sx={{ whiteSpace: 'nowrap' }}>請假時間</TableCell>
+                <TableCell sx={{ whiteSpace: 'nowrap' }}>結束時間</TableCell>
+                <TableCell sx={{ whiteSpace: 'nowrap' }}>請假時數</TableCell>
+                <TableCell sx={{ whiteSpace: 'nowrap' }}>請假原因</TableCell>
+                <TableCell sx={{ whiteSpace: 'nowrap' }}>主管留言</TableCell>
+                <TableCell sx={{ whiteSpace: 'nowrap' }}>代理人員編</TableCell>
+                <TableCell sx={{ whiteSpace: 'nowrap' }}>代理人姓名</TableCell>
+                <TableCell sx={{ whiteSpace: 'nowrap' }}>附件</TableCell>
+                <TableCell sx={{ whiteSpace: 'nowrap' }}>申請狀態</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredHistory.map((row) => (
+                <TableRow
+                  key={row.applicationId}
+                  hover
+                  onClick={() => {
+                    setSelectedId(row.applicationId);
+                    setDialogOpen(true);
+                  }}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <TableCell>{row.applicationDateTime?.split('T')[0] || '—'}</TableCell>
+                  <TableCell>{row.leaveTypeName}</TableCell>
+                  <TableCell>{renderCell(row.approvalDatetime)}</TableCell>
+                  <TableCell>{renderCell(row.startDateTime)}</TableCell>
+                  <TableCell>{renderCell(row.endDateTime)}</TableCell>
+                  <TableCell>{row.leaveHours} 小時 ({(row.leaveHours / 8).toFixed(1)} 天)</TableCell>
+                  <TableCell>
+                    <Tooltip title={row.reason || ''}>
+                      <Typography sx={{ maxWidth: 200, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {row.reason || '—'}
+                      </Typography>
+                    </Tooltip>
+                  </TableCell>
+                  <TableCell>{row.approvalReason || '—'}</TableCell>
+                  <TableCell>{row.proxyEmployeeCode || '—'}</TableCell>
+                  <TableCell>{row.proxyEmployeeName || '—'}</TableCell>
+                  <TableCell>
+                    {row.fileName ? (
+                      <Link href={downloadAttachment(row.fileName)} target="_blank" rel="noopener">
+                        📎
+                      </Link>
+                    ) : '—'}
+                  </TableCell>
+                  <TableCell>{getStatusChip(row.status)}</TableCell>
                 </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredHistory.map((row) => (
-                  <TableRow key={row.applicationId}>
-                    <TableCell>{row.applicationDateTime?.split('T')[0] || '—'}</TableCell>
-                    <TableCell>{row.leaveTypeName}</TableCell>
-                    <TableCell>{renderCell(row.reviewDateTime)}</TableCell>
-                    <TableCell>{renderCell(row.startDateTime)}</TableCell>
-                    <TableCell>{renderCell(row.endDateTime)}</TableCell>
-                    <TableCell>{row.leaveHours} 小時 ({(row.leaveHours / 8).toFixed(1)} 天)</TableCell>
-                    <TableCell>
-                      <Tooltip title={row.reason || ''}>
-                        <Typography sx={{ maxWidth: 200, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                          {row.reason || '—'}
-                        </Typography>
-                      </Tooltip>
-                    </TableCell>
-                    <TableCell>{row.supervisorComment || '—'}</TableCell>
-                    <TableCell>{row.proxyEmployeeCode || '—'}</TableCell>
-                    <TableCell>{row.proxyEmployeeName || '—'}</TableCell>
-                    <TableCell>
-                      {row.attachmentName ? (
-                        <Link href={downloadAttachment(row.attachmentName)} target="_blank" rel="noopener">
-                          📎
-                        </Link>
-                      ) : '—'}
-                    </TableCell>
-                    <TableCell>{getStatusChip(row.status)}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        {/* 詳情 Dialog */}
+        <LeaveDetailDialog
+            open={dialogOpen}
+            leaveId={selectedId}
+            onClose={() => setDialogOpen(false)}
+            onSuccess={async () => {
+              const h = await getLeaveHistory();
+              setHistory(h);
+            }}
+          />
+
         </Box>
       </Box>
     </LocalizationProvider>
+
   );
 }
