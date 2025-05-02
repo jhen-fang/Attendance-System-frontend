@@ -91,8 +91,7 @@ export default function Layout() {
                   textDecoration: 'none',
                   fontSize: '0.95rem',
                   color: pathname === m.path ? '#fff' : '#333',
-                  backgroundColor:
-                    pathname === m.path ? '#0d6efd' : 'transparent',
+                  backgroundColor: pathname === m.path ? '#0d6efd' : 'transparent',
                 }}
               >
                 {m.label}

@@ -33,9 +33,7 @@ export default function App() {
         {/* 任何未知網址 → 依是否登入導向 */}
         <Route
           path="*"
-          element={
-            token ? <Navigate to="/main" replace /> : <Navigate to="/login" replace />
-          }
+          element={token ? <Navigate to="/main" replace /> : <Navigate to="/login" replace />}
         />
       </Routes>
     </BrowserRouter>

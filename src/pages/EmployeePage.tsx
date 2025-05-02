@@ -43,7 +43,9 @@ function EmployeePage() {
 
   if (loading || !profile) {
     return (
-      <Box sx={{ minHeight: '60vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <Box
+        sx={{ minHeight: '60vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+      >
         <CircularProgress />
         <Typography sx={{ ml: 2 }}>資料載入中...</Typography>
       </Box>
@@ -57,30 +59,49 @@ function EmployeePage() {
           歡迎，{profile.employeeName}！
         </Typography>
 
-        <Box component="dl" sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr', rowGap: 1.5, columnGap: 2 }}>
-          <Typography component="dt" fontWeight={600} color="text.secondary">員工編號</Typography>
+        <Box
+          component="dl"
+          sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr', rowGap: 1.5, columnGap: 2 }}
+        >
+          <Typography component="dt" fontWeight={600} color="text.secondary">
+            員工編號
+          </Typography>
           <Typography component="dd">{profile.employeeCode}</Typography>
 
-          <Typography component="dt" fontWeight={600} color="text.secondary">部門</Typography>
+          <Typography component="dt" fontWeight={600} color="text.secondary">
+            部門
+          </Typography>
           <Typography component="dd">{profile.departmentName || '—'}</Typography>
 
-          <Typography component="dt" fontWeight={600} color="text.secondary">職位</Typography>
+          <Typography component="dt" fontWeight={600} color="text.secondary">
+            職位
+          </Typography>
           <Typography component="dd">{profile.positionName || '—'}</Typography>
 
-          <Typography component="dt" fontWeight={600} color="text.secondary">主管</Typography>
+          <Typography component="dt" fontWeight={600} color="text.secondary">
+            主管
+          </Typography>
           <Typography component="dd">
-            {profile.supervisorEmployeeName ? `${profile.supervisorEmployeeName} (${profile.supervisorEmployeeCode})` : '—'}
+            {profile.supervisorEmployeeName
+              ? `${profile.supervisorEmployeeName} (${profile.supervisorEmployeeCode})`
+              : '—'}
           </Typography>
 
-          <Typography component="dt" fontWeight={600} color="text.secondary">到職日</Typography>
+          <Typography component="dt" fontWeight={600} color="text.secondary">
+            到職日
+          </Typography>
           <Typography component="dd">{profile.hireDate}</Typography>
 
-          <Typography component="dt" fontWeight={600} color="text.secondary">年資(月)</Typography>
+          <Typography component="dt" fontWeight={600} color="text.secondary">
+            年資(月)
+          </Typography>
           <Typography component="dd">{profile.monthOfService}</Typography>
         </Box>
 
         <Box sx={{ mt: 3 }}>
-          <Typography fontWeight={600} color="text.secondary" sx={{ mb: 1 }}>角色：</Typography>
+          <Typography fontWeight={600} color="text.secondary" sx={{ mb: 1 }}>
+            角色：
+          </Typography>
           {profile.roleNames.map((r) => (
             <Chip key={r} label={r} sx={{ mr: 1, mb: 1 }} color="primary" />
           ))}

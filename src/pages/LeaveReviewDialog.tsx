@@ -81,7 +81,9 @@ const LeaveReviewDialog: React.FC<LeaveReviewDialogProps> = ({
             <Link href={downloadAttachment(data.fileName)} target="_blank" rel="noopener">
               📎 {data.fileName}
             </Link>
-          ) : '—'}
+          ) : (
+            '—'
+          )}
         </Typography>
         <TextField
           label="主管留言"

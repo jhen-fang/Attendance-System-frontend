@@ -1,9 +1,24 @@
 import { useEffect, useState } from 'react';
 import LeaveDetailDialog from './LeaveDetailDialog';
 import {
-  Box, Typography, Grid, Paper, Table, TableBody, TableCell,
-  TableContainer, TableHead, TableRow, Chip, Link, Tooltip, FormControl,
-  InputLabel, MenuItem, Select, SelectChangeEvent
+  Box,
+  Typography,
+  Grid,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Chip,
+  Link,
+  Tooltip,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
 } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -38,7 +53,7 @@ const getStatusChip = (status: string) => {
       return <Chip label="已拒絕" color="error" />;
     case 'CANCELED':
     case '已取消':
-        return <Chip label="已取消" color="default" />;
+      return <Chip label="已取消" color="default" />;
     default:
       return <Chip label={status} />;
   }
@@ -83,17 +98,34 @@ export default function MainPage() {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-     <Box sx={{ width: '100%', padding: '1rem', boxSizing: 'border-box', display: 'flex', justifyContent: 'center' }}>
-        <Box sx={{ width: '100%', maxWidth: '1200px', padding: 3, backgroundColor: 'white', borderRadius: 2, boxShadow: 3 }}>
-
-
+      <Box
+        sx={{
+          width: '100%',
+          padding: '1rem',
+          boxSizing: 'border-box',
+          display: 'flex',
+          justifyContent: 'center',
+        }}
+      >
+        <Box
+          sx={{
+            width: '100%',
+            maxWidth: '1200px',
+            padding: 3,
+            backgroundColor: 'white',
+            borderRadius: 2,
+            boxShadow: 3,
+          }}
+        >
           <Typography variant="h6" color="text.primary" gutterBottom>
             剩餘假期：
           </Typography>
           <Grid container spacing={2}>
             {leaveTypes.map((lt) => (
               <Grid item xs={4} key={lt.id}>
-                <Paper sx={{ p: 2, textAlign: 'center', backgroundColor: '#0d6efd', color: 'white' }}>
+                <Paper
+                  sx={{ p: 2, textAlign: 'center', backgroundColor: '#0d6efd', color: 'white' }}
+                >
                   <Typography variant="subtitle2">{lt.name}</Typography>
                   <Typography variant="h6">{balances[lt.id] || '讀取中...'}</Typography>
                 </Paper>
@@ -116,7 +148,9 @@ export default function MainPage() {
                 >
                   <MenuItem value="ALL">全部</MenuItem>
                   {leaveTypes.map((lt) => (
-                    <MenuItem key={lt.id} value={lt.name}>{lt.name}</MenuItem>
+                    <MenuItem key={lt.id} value={lt.name}>
+                      {lt.name}
+                    </MenuItem>
                   ))}
                 </Select>
               </FormControl>
@@ -130,7 +164,9 @@ export default function MainPage() {
                   onChange={(e: SelectChangeEvent) => setStatusFilter(e.target.value)}
                 >
                   {statuses.map((s) => (
-                    <MenuItem key={s.value} value={s.value}>{s.label}</MenuItem>
+                    <MenuItem key={s.value} value={s.value}>
+                      {s.label}
+                    </MenuItem>
                   ))}
                 </Select>
               </FormControl>
@@ -138,65 +174,80 @@ export default function MainPage() {
           </Grid>
 
           <TableContainer component={Paper}>
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>申請時間</TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>假別</TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>審核時間</TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>請假時間</TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>結束時間</TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>請假時數</TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>請假原因</TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>主管留言</TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>代理人員編</TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>代理人姓名</TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>附件</TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>申請狀態</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredHistory.map((row) => (
-                <TableRow
-                  key={row.applicationId}
-                  hover
-                  onClick={() => {
-                    setSelectedId(row.applicationId);
-                    setDialogOpen(true);
-                  }}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <TableCell>{row.applicationDateTime?.split('T')[0] || '—'}</TableCell>
-                  <TableCell>{row.leaveTypeName}</TableCell>
-                  <TableCell>{renderCell(row.approvalDatetime)}</TableCell>
-                  <TableCell>{renderCell(row.startDateTime)}</TableCell>
-                  <TableCell>{renderCell(row.endDateTime)}</TableCell>
-                  <TableCell>{row.leaveHours} 小時 ({(row.leaveHours / 8).toFixed(1)} 天)</TableCell>
-                  <TableCell>
-                    <Tooltip title={row.reason || ''}>
-                      <Typography sx={{ maxWidth: 200, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {row.reason || '—'}
-                      </Typography>
-                    </Tooltip>
-                  </TableCell>
-                  <TableCell>{row.approvalReason || '—'}</TableCell>
-                  <TableCell>{row.proxyEmployeeCode || '—'}</TableCell>
-                  <TableCell>{row.proxyEmployeeName || '—'}</TableCell>
-                  <TableCell>
-                    {row.fileName ? (
-                      <Link href={downloadAttachment(row.fileName)} target="_blank" rel="noopener">
-                        📎
-                      </Link>
-                    ) : '—'}
-                  </TableCell>
-                  <TableCell>{getStatusChip(row.status)}</TableCell>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ whiteSpace: 'nowrap' }}>申請時間</TableCell>
+                  <TableCell sx={{ whiteSpace: 'nowrap' }}>假別</TableCell>
+                  <TableCell sx={{ whiteSpace: 'nowrap' }}>審核時間</TableCell>
+                  <TableCell sx={{ whiteSpace: 'nowrap' }}>請假時間</TableCell>
+                  <TableCell sx={{ whiteSpace: 'nowrap' }}>結束時間</TableCell>
+                  <TableCell sx={{ whiteSpace: 'nowrap' }}>請假時數</TableCell>
+                  <TableCell sx={{ whiteSpace: 'nowrap' }}>請假原因</TableCell>
+                  <TableCell sx={{ whiteSpace: 'nowrap' }}>主管留言</TableCell>
+                  <TableCell sx={{ whiteSpace: 'nowrap' }}>代理人員編</TableCell>
+                  <TableCell sx={{ whiteSpace: 'nowrap' }}>代理人姓名</TableCell>
+                  <TableCell sx={{ whiteSpace: 'nowrap' }}>附件</TableCell>
+                  <TableCell sx={{ whiteSpace: 'nowrap' }}>申請狀態</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        {/* 詳情 Dialog */}
-        <LeaveDetailDialog
+              </TableHead>
+              <TableBody>
+                {filteredHistory.map((row) => (
+                  <TableRow
+                    key={row.applicationId}
+                    hover
+                    onClick={() => {
+                      setSelectedId(row.applicationId);
+                      setDialogOpen(true);
+                    }}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <TableCell>{row.applicationDateTime?.split('T')[0] || '—'}</TableCell>
+                    <TableCell>{row.leaveTypeName}</TableCell>
+                    <TableCell>{renderCell(row.approvalDatetime)}</TableCell>
+                    <TableCell>{renderCell(row.startDateTime)}</TableCell>
+                    <TableCell>{renderCell(row.endDateTime)}</TableCell>
+                    <TableCell>
+                      {row.leaveHours} 小時 ({(row.leaveHours / 8).toFixed(1)} 天)
+                    </TableCell>
+                    <TableCell>
+                      <Tooltip title={row.reason || ''}>
+                        <Typography
+                          sx={{
+                            maxWidth: 200,
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                          }}
+                        >
+                          {row.reason || '—'}
+                        </Typography>
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell>{row.approvalReason || '—'}</TableCell>
+                    <TableCell>{row.proxyEmployeeCode || '—'}</TableCell>
+                    <TableCell>{row.proxyEmployeeName || '—'}</TableCell>
+                    <TableCell>
+                      {row.fileName ? (
+                        <Link
+                          href={downloadAttachment(row.fileName)}
+                          target="_blank"
+                          rel="noopener"
+                        >
+                          📎
+                        </Link>
+                      ) : (
+                        '—'
+                      )}
+                    </TableCell>
+                    <TableCell>{getStatusChip(row.status)}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          {/* 詳情 Dialog */}
+          <LeaveDetailDialog
             open={dialogOpen}
             leaveId={selectedId}
             onClose={() => setDialogOpen(false)}
@@ -205,10 +256,8 @@ export default function MainPage() {
               setHistory(h);
             }}
           />
-
         </Box>
       </Box>
     </LocalizationProvider>
-
   );
 }
