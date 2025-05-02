@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions,
-  Button, Grid, Typography, TextField, Select, MenuItem, Stack, FormLabel
+  Button, Grid, Typography, TextField, Select, MenuItem, Stack
 } from '@mui/material';
 import dayjs from 'dayjs';
-import { getLeaveDetail, updateLeave } from '../api/leaveDetailApi';
-import { getProxies, uploadFile } from '../api/leaveApi';
+import { getProxies } from '../api/employee';
+import { uploadFile, getLeaveDetail, updateLeave } from '../api/leave';
 
 interface Props {
   open: boolean;
@@ -111,7 +111,6 @@ export default function LeaveDetailDialog({ open, onClose, leaveId, onSuccess }:
                 type="datetime-local"
                 value={dayjs(data.startDateTime).format('YYYY-MM-DDTHH:mm')}
                 onChange={(e) => handleChange('startDateTime', e.target.value)}
-                InputLabelProps={{ shrink: true }}
               />
             ) : (
               <Typography>{dayjs(data.startDateTime).format('YYYY/MM/DD HH:mm')}</Typography>

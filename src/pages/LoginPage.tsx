@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login } from '../api/authApi';
+import { login } from '../api/auth';
 
 function LoginPage({ setToken }: { setToken: (t: string) => void }) {
   const navigate = useNavigate();

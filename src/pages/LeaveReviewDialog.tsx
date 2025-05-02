@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getLeave, approveLeave, rejectLeave } from '../api/managerApi';
+import { getLeave, approveLeave, rejectLeave } from '../api/manager';
 import {
   Dialog,
   DialogTitle,

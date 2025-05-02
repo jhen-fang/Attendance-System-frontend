@@ -12,7 +12,7 @@ import {
   Typography,
   Link,
 } from '@mui/material';
-import { getAllLeaves } from '../api/managerApi';
+import { getAllLeaves } from '../api/manager';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 
@@ -71,7 +71,7 @@ const LeaveManage = () => {
     }
     return <Chip label={status} color="default" />;
   };
-  
+
 
   const renderCell = (datetime: string) =>
     datetime ? dayjs(datetime).format('YYYY-MM-DD HH:mm') : '—';

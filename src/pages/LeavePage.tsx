@@ -4,12 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import dayjs, { Dayjs } from 'dayjs';
 import {
   getLeaveBalance,
-  getProxies,
-  getSupervisor,
   uploadFile,
   applyLeave,
-  getTaiwanHolidays,
-} from '../api/leaveApi';
+} from '../api/leave';
+import { getProxies , getSupervisor} from '../api/employee';
+import { getTaiwanHolidays } from '../api/holiday';
 import { EmployeeDTO } from '../types/Employee';
 import {
   Box,
@@ -23,7 +22,6 @@ import {
   Typography,
   Select,
   MenuItem,
-  InputLabel,
   Alert,
   Dialog,
   DialogTitle,
@@ -37,7 +35,6 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { CheckCircle } from 'lucide-react';
 
 export default function LeavePage() {
-  const navigate = useNavigate();
   const [leaveTypeId, setLeaveTypeId] = useState(1);
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
   const [startTime, setStartTime] = useState<Dayjs | null>(null);

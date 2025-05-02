@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { getLeaveBalance, getLeaveHistory, downloadAttachment } from '../api/mainPageApi';
+import { getLeaveBalance, getLeaveHistory, downloadAttachment } from '../api/leave';
 
 const leaveTypes = [
   { id: 1, name: '特休假' },
