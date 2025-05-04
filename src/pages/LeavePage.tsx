@@ -1,15 +1,9 @@
-
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import dayjs, { Dayjs } from 'dayjs';
-import {
-  getLeaveBalance,
-  getProxies,
-  getSupervisor,
-  uploadFile,
-  applyLeave,
-  getTaiwanHolidays,
-} from '../api/leaveApi';
+import { getLeaveBalance, uploadFile, applyLeave } from '../api/leave';
+import { getProxies, getSupervisor } from '../api/employee';
+import { getTaiwanHolidays } from '../api/holiday';
 import { EmployeeDTO } from '../types/Employee';
 import {
   Box,
@@ -23,21 +17,19 @@ import {
   Typography,
   Select,
   MenuItem,
-  InputLabel,
   Alert,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
   Stack,
-  Grid
+  Grid,
 } from '@mui/material';
 import { LocalizationProvider, DatePicker, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { CheckCircle } from 'lucide-react';
 
 export default function LeavePage() {
-  const navigate = useNavigate();
   const [leaveTypeId, setLeaveTypeId] = useState(1);
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
   const [startTime, setStartTime] = useState<Dayjs | null>(null);
@@ -59,10 +51,10 @@ export default function LeavePage() {
   const [holidays, setHolidays] = useState<string[]>([]);
 
   useEffect(() => {
-    getSupervisor().then(name => setSupervisor(name || ''));
+    getSupervisor().then((name) => setSupervisor(name || ''));
     getProxies().then(setProxies);
-    getTaiwanHolidays().then(dates => {
-      setHolidays(dates.map(d => dayjs(d).format('YYYY-MM-DD')));
+    getTaiwanHolidays().then((dates) => {
+      setHolidays(dates.map((d) => dayjs(d).format('YYYY-MM-DD')));
     });
   }, []);
 
@@ -95,7 +87,10 @@ export default function LeavePage() {
         const firstDayHours = 18 - Math.max(start.hour(), 9);
         const lastDayHours = Math.min(end.hour(), 18) - 9;
         const fullDays = dayDiff - 1;
-        hours = (firstDayHours > 0 ? firstDayHours : 0) + (fullDays > 0 ? fullDays * 8 : 0) + (lastDayHours > 0 ? lastDayHours : 0);
+        hours =
+          (firstDayHours > 0 ? firstDayHours : 0) +
+          (fullDays > 0 ? fullDays * 8 : 0) +
+          (lastDayHours > 0 ? lastDayHours : 0);
       }
       setLeaveHours(hours);
     } else if (start && end && (end.isSame(start) || end.isBefore(start))) {
@@ -160,90 +155,195 @@ export default function LeavePage() {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Box sx={{ width: '100%', padding: '1rem', boxSizing: 'border-box', display: 'flex', justifyContent: 'center' }}>
-        <Box sx={{ width: '100%', maxWidth: '1200px', padding: 3, backgroundColor: 'white', borderRadius: 2, boxShadow: 3 }}>
+      <Box
+        sx={{
+          width: '100%',
+          padding: '1rem',
+          boxSizing: 'border-box',
+          display: 'flex',
+          justifyContent: 'center',
+        }}
+      >
+        <Box
+          sx={{
+            width: '100%',
+            maxWidth: '1200px',
+            padding: 3,
+            backgroundColor: 'white',
+            borderRadius: 2,
+            boxShadow: 3,
+          }}
+        >
+          <Typography variant="h6" color="text.primary" mb={2}>
+            請假申請表
+          </Typography>
 
-        <Typography variant="h6" color="text.primary" mb={2}>請假申請表</Typography>
+          {errorMsg && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {errorMsg}
+            </Alert>
+          )}
 
-        {errorMsg && <Alert severity="error" sx={{ mb: 2 }}>{errorMsg}</Alert>}
+          <FormControl fullWidth size="small" sx={{ mb: 2 }}>
+            <FormLabel>假別</FormLabel>
+            <RadioGroup
+              row
+              value={leaveTypeId}
+              onChange={(e) => setLeaveTypeId(Number(e.target.value))}
+            >
+              <FormControlLabel
+                value={1}
+                sx={{ color: 'text.primary' }}
+                control={<Radio />}
+                label="特休"
+              />
+              <FormControlLabel
+                value={2}
+                sx={{ color: 'text.primary' }}
+                control={<Radio />}
+                label="病假"
+              />
+              <FormControlLabel
+                value={3}
+                sx={{ color: 'text.primary' }}
+                control={<Radio />}
+                label="事假"
+              />
+            </RadioGroup>
+          </FormControl>
 
-        <FormControl fullWidth size="small" sx={{ mb: 2 }}>
-          <FormLabel>假別</FormLabel>
-          <RadioGroup row value={leaveTypeId} onChange={(e) => setLeaveTypeId(Number(e.target.value))}>
-            <FormControlLabel value={1} sx={{ color: 'text.primary' }} control={<Radio />} label="特休" />
-            <FormControlLabel value={2} sx={{ color: 'text.primary' }} control={<Radio />} label="病假" />
-            <FormControlLabel value={3} sx={{ color: 'text.primary' }} control={<Radio />} label="事假" />
-          </RadioGroup>
-        </FormControl>
+          <FormLabel>開始時間</FormLabel>
+          <Grid container spacing={2} sx={{ mb: 1, mt: 0.5 }}>
+            <Grid item xs={6}>
+              <DatePicker
+                label="開始日期"
+                value={startDate}
+                onChange={setStartDate}
+                shouldDisableDate={disableDate}
+                slotProps={{ textField: { size: 'small', fullWidth: true } }}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TimePicker
+                ampm={false}
+                views={['hours']}
+                format="HH:mm"
+                label="開始時間"
+                value={startTime}
+                onChange={setStartTime}
+                minTime={dayjs().hour(9)}
+                maxTime={dayjs().hour(18)}
+                slotProps={{ textField: { size: 'small', fullWidth: true } }}
+              />
+            </Grid>
+          </Grid>
 
-        <FormLabel>開始時間</FormLabel>
-        <Grid container spacing={2} sx={{ mb: 1, mt: 0.5 }}>
-          <Grid item xs={6}><DatePicker label="開始日期" value={startDate} onChange={setStartDate} shouldDisableDate={disableDate} slotProps={{ textField: { size: 'small', fullWidth: true } }} /></Grid>
-          <Grid item xs={6}><TimePicker ampm={false} views={['hours']} format="HH:mm" label="開始時間" value={startTime} onChange={setStartTime} minTime={dayjs().hour(9)} maxTime={dayjs().hour(18)} slotProps={{ textField: { size: 'small', fullWidth: true } }} /></Grid>
-        </Grid>
+          <FormLabel>結束時間</FormLabel>
+          <Grid container spacing={2} sx={{ mb: 2, mt: 0.5 }}>
+            <Grid item xs={6}>
+              <DatePicker
+                label="結束日期"
+                value={endDate}
+                onChange={setEndDate}
+                shouldDisableDate={disableDate}
+                slotProps={{ textField: { size: 'small', fullWidth: true } }}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TimePicker
+                ampm={false}
+                views={['hours']}
+                format="HH:mm"
+                label="結束時間"
+                value={endTime}
+                onChange={setEndTime}
+                minTime={dayjs().hour(9)}
+                maxTime={dayjs().hour(18)}
+                slotProps={{ textField: { size: 'small', fullWidth: true } }}
+              />
+            </Grid>
+          </Grid>
 
-        <FormLabel>結束時間</FormLabel>
-        <Grid container spacing={2} sx={{ mb: 2, mt: 0.5 }}>
-          <Grid item xs={6}><DatePicker label="結束日期" value={endDate} onChange={setEndDate} shouldDisableDate={disableDate} slotProps={{ textField: { size: 'small', fullWidth: true } }} /></Grid>
-          <Grid item xs={6}><TimePicker ampm={false} views={['hours']} format="HH:mm" label="結束時間" value={endTime} onChange={setEndTime} minTime={dayjs().hour(9)} maxTime={dayjs().hour(18)} slotProps={{ textField: { size: 'small', fullWidth: true } }} /></Grid>
-        </Grid>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            請假時數：{leaveHours} 小時（上限 {maxHours} 小時）
+          </Typography>
 
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>請假時數：{leaveHours} 小時（上限 {maxHours} 小時）</Typography>
+          <FormLabel>代理人</FormLabel>
+          <FormControl fullWidth size="small" sx={{ mb: 2, mt: 0.5 }}>
+            <Select value={proxyCode} onChange={(e) => setProxyCode(e.target.value)}>
+              <MenuItem value="">- Select -</MenuItem>
+              {proxies.map((p) => (
+                <MenuItem key={p.employeeCode} value={p.employeeCode}>
+                  {p.employeeName}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
-        <FormLabel>代理人</FormLabel>
-        <FormControl fullWidth size="small" sx={{ mb: 2, mt: 0.5 }}>
-          <Select value={proxyCode} onChange={(e) => setProxyCode(e.target.value)}>
-            <MenuItem value="">- Select -</MenuItem>
-            {proxies.map(p => <MenuItem key={p.employeeCode} value={p.employeeCode}>{p.employeeName}</MenuItem>)}
-          </Select>
-        </FormControl>
+          <Typography variant="body2" color="text.primary" sx={{ mb: 2 }}>
+            主管：{supervisor}
+          </Typography>
 
-        <Typography variant="body2" color="text.primary" sx={{ mb: 2 }}>主管：{supervisor}</Typography>
+          <FormLabel>請假事由</FormLabel>
+          <TextField
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            fullWidth
+            multiline
+            rows={3}
+            size="small"
+            sx={{ mb: 2, mt: 0.5 }}
+          />
 
-        <FormLabel>請假事由</FormLabel>
-        <TextField value={reason} onChange={(e) => setReason(e.target.value)} fullWidth multiline rows={3} size="small" sx={{ mb: 2, mt: 0.5 }} />
+          <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
+            <Button variant="outlined" component="label" size="small">
+              上傳附件
+              <input
+                type="file"
+                hidden
+                onChange={(e) => {
+                  setFile(e.target.files?.[0] || null);
+                  setFileName(e.target.files?.[0]?.name || '');
+                }}
+              />
+            </Button>
+            <Typography variant="body2" color="text.secondary">
+              {fileName || '未選擇檔案'}
+            </Typography>
+          </Stack>
 
-        <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
-          <Button variant="outlined" component="label" size="small">
-            上傳附件
-            <input type="file" hidden onChange={(e) => {
-              setFile(e.target.files?.[0] || null);
-              setFileName(e.target.files?.[0]?.name || '');
-            }} />
+          <Button variant="contained" color="primary" fullWidth onClick={handleSubmit}>
+            立即申請請假
           </Button>
-          <Typography variant="body2" color="text.secondary">{fileName || '未選擇檔案'}</Typography>
-        </Stack>
 
-        <Button variant="contained" color="primary" fullWidth onClick={handleSubmit}>立即申請請假</Button>
-
-        <Dialog open={!!successData} onClose={() => setSuccessData(null)}>
-          <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <CheckCircle style={{ color: 'green' }} />
-            <Typography variant="h6">請假申請成功</Typography>
-          </DialogTitle>
-          <DialogContent dividers>
-            <Stack spacing={1}>
-              <Typography>假單編號：{successData?.leaveApplicationId}</Typography>
-              <Typography>假別：{successData?.leaveTypeName}</Typography>
-              <Typography>
-                時間：{dayjs(successData?.startDateTime).format('YYYY-MM-DD HH:mm')} ～ {dayjs(successData?.endDateTime).format('YYYY-MM-DD HH:mm')}
-              </Typography>
-              <Typography>總時數：{successData?.leaveHours} 小時</Typography>
-              <Typography>代理人：{successData?.proxyEmployeeName || '—'}</Typography>
-              <Typography>主管：{supervisor || '—'}</Typography>
-              <Typography>事由：{successData?.reason || '—'}</Typography>
-              <Typography>附件：{successData?.fileName || '—'}</Typography>
-            </Stack>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setSuccessData(null)} variant="contained" color="primary">關閉</Button>
-          </DialogActions>
-        </Dialog>
-
-              </Box>
+          <Dialog open={!!successData} onClose={() => setSuccessData(null)}>
+            <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <CheckCircle style={{ color: 'green' }} />
+              <Typography variant="h6">請假申請成功</Typography>
+            </DialogTitle>
+            <DialogContent dividers>
+              <Stack spacing={1}>
+                <Typography>假單編號：{successData?.leaveApplicationId}</Typography>
+                <Typography>假別：{successData?.leaveTypeName}</Typography>
+                <Typography>
+                  時間：{dayjs(successData?.startDateTime).format('YYYY-MM-DD HH:mm')} ～{' '}
+                  {dayjs(successData?.endDateTime).format('YYYY-MM-DD HH:mm')}
+                </Typography>
+                <Typography>總時數：{successData?.leaveHours} 小時</Typography>
+                <Typography>代理人：{successData?.proxyEmployeeName || '—'}</Typography>
+                <Typography>主管：{supervisor || '—'}</Typography>
+                <Typography>事由：{successData?.reason || '—'}</Typography>
+                <Typography>附件：{successData?.fileName || '—'}</Typography>
+              </Stack>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setSuccessData(null)} variant="contained" color="primary">
+                關閉
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </Box>
       </Box>
     </LocalizationProvider>
   );
 }
-
-

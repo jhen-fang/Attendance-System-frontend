@@ -12,7 +12,7 @@ import {
   Typography,
   Link,
 } from '@mui/material';
-import { getAllLeaves } from '../api/managerApi';
+import { getAllLeaves } from '../api/manager';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 
@@ -24,7 +24,7 @@ const LeaveManage = () => {
   const [approvalReason, setApprovalReason] = useState('');
 
   // 點擊未審核按鈕時打開 dialog
-  const handleOpenDialog = (leaveId:number) => {
+  const handleOpenDialog = (leaveId: number) => {
     setSelectedId(leaveId);
     setDialogOpen(true);
   };
@@ -54,7 +54,9 @@ const LeaveManage = () => {
   const getStatusChip = (status: string, id: number) => {
     if (status === '待審核') {
       return (
-        <Chip label="待審核" color="default"
+        <Chip
+          label="待審核"
+          color="default"
           onClick={(e) => {
             e.stopPropagation();
             handleOpenDialog(id);
@@ -71,7 +73,6 @@ const LeaveManage = () => {
     }
     return <Chip label={status} color="default" />;
   };
-  
 
   const renderCell = (datetime: string) =>
     datetime ? dayjs(datetime).format('YYYY-MM-DD HH:mm') : '—';
@@ -119,7 +120,7 @@ const LeaveManage = () => {
         approvalReason={approvalReason}
         setApprovalReason={setApprovalReason}
         downloadAttachment={downloadAttachment}
-    />
+      />
     </div>
   );
 };

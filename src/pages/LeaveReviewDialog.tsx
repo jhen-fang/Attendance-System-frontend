@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getLeave, approveLeave, rejectLeave } from '../api/managerApi';
+import { getLeave, approveLeave, rejectLeave } from '../api/manager';
 import {
   Dialog,
   DialogTitle,
@@ -81,7 +81,9 @@ const LeaveReviewDialog: React.FC<LeaveReviewDialogProps> = ({
             <Link href={downloadAttachment(data.fileName)} target="_blank" rel="noopener">
               📎 {data.fileName}
             </Link>
-          ) : '—'}
+          ) : (
+            '—'
+          )}
         </Typography>
         <TextField
           label="主管留言"

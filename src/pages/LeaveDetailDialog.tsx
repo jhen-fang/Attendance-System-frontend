@@ -1,11 +1,20 @@
 import { useEffect, useState } from 'react';
 import {
-  Dialog, DialogTitle, DialogContent, DialogActions,
-  Button, Grid, Typography, TextField, Select, MenuItem, Stack, FormLabel
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Grid,
+  Typography,
+  TextField,
+  Select,
+  MenuItem,
+  Stack,
 } from '@mui/material';
 import dayjs from 'dayjs';
-import { getLeaveDetail, updateLeave } from '../api/leaveDetailApi';
-import { getProxies, uploadFile } from '../api/leaveApi';
+import { getProxies } from '../api/employee';
+import { uploadFile, getLeaveDetail, updateLeave } from '../api/leave';
 
 interface Props {
   open: boolean;
@@ -51,7 +60,10 @@ export default function LeaveDetailDialog({ open, onClose, leaveId, onSuccess }:
       const firstDayHours = 18 - Math.max(start.hour(), 9);
       const lastDayHours = Math.min(end.hour(), 18) - 9;
       const fullDays = dayDiff - 1;
-      hours = (firstDayHours > 0 ? firstDayHours : 0) + (fullDays > 0 ? fullDays * 8 : 0) + (lastDayHours > 0 ? lastDayHours : 0);
+      hours =
+        (firstDayHours > 0 ? firstDayHours : 0) +
+        (fullDays > 0 ? fullDays * 8 : 0) +
+        (lastDayHours > 0 ? lastDayHours : 0);
     }
     return hours;
   };
@@ -86,7 +98,7 @@ export default function LeaveDetailDialog({ open, onClose, leaveId, onSuccess }:
       reason: data.reason,
       proxyEmployeeCode: data.proxyEmployeeCode ?? '',
       filePath: uploadedPath,
-      fileName: uploadedName
+      fileName: uploadedName,
     };
     console.log('送出更新資料：', payload);
     await updateLeave(leaveId!, payload);
@@ -101,8 +113,14 @@ export default function LeaveDetailDialog({ open, onClose, leaveId, onSuccess }:
       <DialogTitle>請假紀錄詳情</DialogTitle>
       <DialogContent dividers>
         <Grid container spacing={2}>
-          <Grid item xs={6}><Typography variant="caption">申請人</Typography><Typography>{data.employeeName}</Typography></Grid>
-          <Grid item xs={6}><Typography variant="caption">假別</Typography><Typography>{data.leaveTypeName}</Typography></Grid>
+          <Grid item xs={6}>
+            <Typography variant="caption">申請人</Typography>
+            <Typography>{data.employeeName}</Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="caption">假別</Typography>
+            <Typography>{data.leaveTypeName}</Typography>
+          </Grid>
           <Grid item xs={6}>
             <Typography variant="caption">開始時間</Typography>
             {isEditing ? (
@@ -111,7 +129,6 @@ export default function LeaveDetailDialog({ open, onClose, leaveId, onSuccess }:
                 type="datetime-local"
                 value={dayjs(data.startDateTime).format('YYYY-MM-DDTHH:mm')}
                 onChange={(e) => handleChange('startDateTime', e.target.value)}
-                InputLabelProps={{ shrink: true }}
               />
             ) : (
               <Typography>{dayjs(data.startDateTime).format('YYYY/MM/DD HH:mm')}</Typography>
@@ -131,7 +148,10 @@ export default function LeaveDetailDialog({ open, onClose, leaveId, onSuccess }:
               <Typography>{dayjs(data.endDateTime).format('YYYY/MM/DD HH:mm')}</Typography>
             )}
           </Grid>
-          <Grid item xs={12}><Typography variant="caption">請假時數</Typography><Typography>{data.leaveHours} 小時</Typography></Grid>
+          <Grid item xs={12}>
+            <Typography variant="caption">請假時數</Typography>
+            <Typography>{data.leaveHours} 小時</Typography>
+          </Grid>
           <Grid item xs={12}>
             <Typography variant="caption">請假原因</Typography>
             {isEditing ? (
@@ -139,7 +159,8 @@ export default function LeaveDetailDialog({ open, onClose, leaveId, onSuccess }:
                 fullWidth
                 value={data.reason}
                 onChange={(e) => handleChange('reason', e.target.value)}
-                multiline rows={3}
+                multiline
+                rows={3}
               />
             ) : (
               <Typography>{data.reason || '—'}</Typography>
@@ -154,8 +175,10 @@ export default function LeaveDetailDialog({ open, onClose, leaveId, onSuccess }:
                 onChange={(e) => handleChange('proxyEmployeeCode', e.target.value)}
               >
                 <MenuItem value="">- 請選擇 -</MenuItem>
-                {proxies.map(p => (
-                  <MenuItem key={p.employeeCode} value={p.employeeCode}>{p.employeeName}</MenuItem>
+                {proxies.map((p) => (
+                  <MenuItem key={p.employeeCode} value={p.employeeCode}>
+                    {p.employeeName}
+                  </MenuItem>
                 ))}
               </Select>
             ) : (
@@ -183,13 +206,21 @@ export default function LeaveDetailDialog({ open, onClose, leaveId, onSuccess }:
       <DialogActions sx={{ justifyContent: 'flex-end' }}>
         {!isEditing ? (
           <>
-            <Button onClick={() => setIsEditing(true)} disabled={data.status !== '待審核'} variant="outlined">編輯</Button>
+            <Button
+              onClick={() => setIsEditing(true)}
+              disabled={data.status !== '待審核'}
+              variant="outlined"
+            >
+              編輯
+            </Button>
             <Button onClick={onClose}>關閉</Button>
           </>
         ) : (
           <>
             <Button onClick={() => setIsEditing(false)}>取消</Button>
-            <Button onClick={handleSubmit} variant="contained">儲存</Button>
+            <Button onClick={handleSubmit} variant="contained">
+              儲存
+            </Button>
             <Button onClick={onClose}>關閉</Button>
           </>
         )}

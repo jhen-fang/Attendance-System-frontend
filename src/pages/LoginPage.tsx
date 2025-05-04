@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login } from '../api/authApi';
+import { login } from '../api/auth';
 
 function LoginPage({ setToken }: { setToken: (t: string) => void }) {
   const navigate = useNavigate();
@@ -21,25 +21,29 @@ function LoginPage({ setToken }: { setToken: (t: string) => void }) {
   };
 
   return (
-    <div style={{
-      height: '100vh',
-      width: '100vw',
-      backgroundColor: '#f8f9fa',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      margin: 0,
-      padding: 0,
-      boxSizing: 'border-box'
-    }}>
-      <div style={{
-        width: '320px',
-        padding: '2rem',
-        borderRadius: '10px',
-        backgroundColor: 'white',
-        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.1)',
-        textAlign: 'center'
-      }}>
+    <div
+      style={{
+        height: '100vh',
+        width: '100vw',
+        backgroundColor: '#f8f9fa',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        margin: 0,
+        padding: 0,
+        boxSizing: 'border-box',
+      }}
+    >
+      <div
+        style={{
+          width: '320px',
+          padding: '2rem',
+          borderRadius: '10px',
+          backgroundColor: 'white',
+          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.1)',
+          textAlign: 'center',
+        }}
+      >
         {/* Logo 區域 */}
         <div style={{ marginBottom: '1.5rem' }}>
           <img
@@ -52,9 +56,7 @@ function LoginPage({ setToken }: { setToken: (t: string) => void }) {
 
         {/* 輸入區域 */}
         <div style={{ textAlign: 'left', marginBottom: '1.5rem' }}>
-          <label style={{ display: 'block', marginBottom: '0.5rem' }}>
-            員工ID
-          </label>
+          <label style={{ display: 'block', marginBottom: '0.5rem' }}>員工ID</label>
           <input
             type="text"
             value={employeeCode}
@@ -67,12 +69,10 @@ function LoginPage({ setToken }: { setToken: (t: string) => void }) {
               borderRadius: '6px',
               border: '1px solid #ccc',
               backgroundColor: '#ffffff',
-              color: '#333'
+              color: '#333',
             }}
           />
-          <label style={{ display: 'block', marginBottom: '0.5rem' }}>
-            密碼
-          </label>
+          <label style={{ display: 'block', marginBottom: '0.5rem' }}>密碼</label>
           <input
             type="password"
             value={password}
@@ -101,15 +101,15 @@ function LoginPage({ setToken }: { setToken: (t: string) => void }) {
             borderRadius: '6px',
             fontSize: '1rem',
             cursor: 'pointer',
-            transition: 'background-color 0.3s'
+            transition: 'background-color 0.3s',
           }}
-          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#0b5ed7'}
-          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#0d6efd'}
+          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#0b5ed7')}
+          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#0d6efd')}
         >
           登入
         </button>
         {errorMsg && (
-          <div style={{marginTop:'1rem',color:'red',fontSize:'0.9rem'}}>{errorMsg}</div>
+          <div style={{ marginTop: '1rem', color: 'red', fontSize: '0.9rem' }}>{errorMsg}</div>
         )}
       </div>
     </div>
