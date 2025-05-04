@@ -1,7 +1,7 @@
 // EmployeePage.tsx
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { getEmployeeProfile, getProxies, getSupervisor } from '../api/employee';
 import { EmployeeDTO } from '../types/Employee';
 import dayjs from 'dayjs';
 import { Box, Typography, Chip, Paper, CircularProgress } from '@mui/material';
@@ -14,22 +14,20 @@ function EmployeePage() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem('jwtToken');
-        if (!token) {
-          navigate('/login');
-          return;
-        }
-
-        const res = await axios.get('http://localhost:8080/api/employee', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        const data = res.data.data;
+        const data = await getEmployeeProfile();
         if (!data.monthOfService || data.monthOfService === 0) {
           const months = dayjs().diff(dayjs(data.hireDate), 'month');
           data.monthOfService = months;
         }
         setProfile(data);
+  
+        // 這裡新增的部分
+        const supervisor = await getSupervisor();
+        console.log('主管:', supervisor);
+  
+        const proxies = await getProxies();
+        console.log('代理人:', proxies);
+  
       } catch (err) {
         console.error('取得個人資料失敗', err);
         navigate('/login');
@@ -37,7 +35,7 @@ function EmployeePage() {
         setLoading(false);
       }
     };
-
+  
     fetchProfile();
   }, [navigate]);
 
