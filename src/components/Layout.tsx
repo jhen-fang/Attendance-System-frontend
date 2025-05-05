@@ -2,14 +2,6 @@ import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const menu = [
-  { path: '/main', label: '主頁' },
-  { path: '/employee', label: '員工資料' },
-  { path: '/leave', label: '請假頁面' },
-  { path: '/leave-manage', label: '假單管理' },
-  { path: '/logout', label: '登出', isLogout: true },
-];
-
 const containerStyle = {
   maxWidth: '1200px',
   width: '100%',
@@ -20,6 +12,19 @@ const containerStyle = {
 export default function Layout() {
   const { pathname } = useLocation();
   const [employeeName, setEmployeeName] = useState<string | null>(null);
+  const [roleNames, setRoleNames] = useState<string[]>([]);
+
+  const fullMenu = [
+    { path: '/main', label: '主頁' },
+    { path: '/employee', label: '員工資料' },
+    { path: '/leave', label: '請假頁面' },
+    { path: '/leave-manage', label: '假單管理', role: 'MANAGER' },
+    { path: '/logout', label: '登出', isLogout: true },
+  ];
+
+  const filteredMenu = fullMenu.filter((item) => {
+    return !item.role || roleNames.includes(item.role);
+  });
 
   useEffect(() => {
     const token = localStorage.getItem('jwtToken');
@@ -30,6 +35,7 @@ export default function Layout() {
       })
       .then((res) => {
         setEmployeeName(res.data.data.employeeName);
+        setRoleNames(res.data.data.roleNames || []);
       })
       .catch(() => setEmployeeName(null));
   }, []);
@@ -74,7 +80,7 @@ export default function Layout() {
             >
               考勤管理系統
             </span>
-            {menu.map((m) => (
+            {filteredMenu.map((m) => (
               <Link
                 key={m.path}
                 to={m.isLogout ? '#' : m.path}
