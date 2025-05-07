@@ -10,7 +10,7 @@ function LoginPage({ setToken }: { setToken: (t: string) => void }) {
 
   const handleLogin = async () => {
     try {
-      setErrorMsg(''); // 清除前一次錯誤訊息
+      setErrorMsg('');
       const data = await login(employeeCode, password);
       localStorage.setItem('jwtToken', data.data.token);
       setToken(data.data.token);

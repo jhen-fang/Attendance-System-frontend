@@ -117,7 +117,7 @@ export default function Layout() {
         style={{
           width: '100%',
           boxSizing: 'border-box',
-          paddingTop: '88px', // 預留 header 高度 + 安全間距
+          paddingTop: '88px',
         }}
       >
         <div style={containerStyle}>
