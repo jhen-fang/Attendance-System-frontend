@@ -74,24 +74,23 @@ export default function LeavePage() {
 
   useEffect(() => {
     if (start && end && end.isAfter(start)) {
-      const startDay = start.startOf('day');
-      const endDay = end.startOf('day');
-      const dayDiff = endDay.diff(startDay, 'day');
-
       let hours = 0;
-      if (dayDiff === 0) {
-        const startHour = Math.max(start.hour(), 9);
-        const endHour = Math.min(end.hour(), 18);
-        hours = endHour > startHour ? endHour - startHour : 0;
-      } else {
-        const firstDayHours = 18 - Math.max(start.hour(), 9);
-        const lastDayHours = Math.min(end.hour(), 18) - 9;
-        const fullDays = dayDiff - 1;
-        hours =
-          (firstDayHours > 0 ? firstDayHours : 0) +
-          (fullDays > 0 ? fullDays * 8 : 0) +
-          (lastDayHours > 0 ? lastDayHours : 0);
+      let curr = start.startOf('hour');
+
+      while (curr.isBefore(end)) {
+        const isHoliday = holidays.includes(curr.format('YYYY-MM-DD'));
+        const isWeekend = curr.day() === 0 || curr.day() === 6;
+
+        if (!isHoliday && !isWeekend) {
+          const startHour = curr.hour();
+          if (startHour >= 9 && startHour < 18) {
+            hours += 1;
+          }
+        }
+
+        curr = curr.add(1, 'hour');
       }
+
       setLeaveHours(hours);
     } else if (start && end && (end.isSame(start) || end.isBefore(start))) {
       setErrorMsg('結束時間不能早於或等於開始時間，請重新選擇');
@@ -99,7 +98,7 @@ export default function LeavePage() {
       setEndDate(null);
       setLeaveHours(0);
     }
-  }, [start, end]);
+  }, [start, end, holidays]);
 
   const handleFileUpload = async () => {
     if (!file) return;
