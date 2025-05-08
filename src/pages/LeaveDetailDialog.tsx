@@ -5,16 +5,19 @@ import {
   DialogContent,
   DialogActions,
   Button,
-  Grid,
   Typography,
   TextField,
   Select,
   MenuItem,
-  Stack,
 } from '@mui/material';
-import dayjs from 'dayjs';
-import { getProxies } from '../api/employee';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import dayjs, { Dayjs } from 'dayjs';
 import { uploadFile, getLeaveDetail, updateLeave } from '../api/leave';
+import FileUploadButton from '../components/FileUploadButton';
+import LeaveTimePickerGroup from '../components/LeaveTimePickerGroup';
+import { useLeaveHoursCalculator } from '../hooks/useLeaveHoursCalculator';
+import { useProxiesAndHolidays } from '../hooks/useProxiesAndHolidays';
 
 interface Props {
   open: boolean;
@@ -26,63 +29,60 @@ interface Props {
 export default function LeaveDetailDialog({ open, onClose, leaveId, onSuccess }: Props) {
   const [data, setData] = useState<any>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [proxies, setProxies] = useState<any[]>([]);
   const [file, setFile] = useState<File | null>(null);
   const [fileName, setFileName] = useState('');
+  const [startDate, setStartDate] = useState<Dayjs | null>(null);
+  const [startTime, setStartTime] = useState<Dayjs | null>(null);
+  const [endDate, setEndDate] = useState<Dayjs | null>(null);
+  const [endTime, setEndTime] = useState<Dayjs | null>(null);
+  const [start, setStart] = useState<Dayjs | null>(null);
+  const [end, setEnd] = useState<Dayjs | null>(null);
+
+  const { proxies, holidays } = useProxiesAndHolidays();
+  const leaveHours = useLeaveHoursCalculator(start, end, holidays);
 
   useEffect(() => {
     if (leaveId && open) {
-      Promise.all([getLeaveDetail(leaveId), getProxies()]).then(([detail, proxyList]) => {
-        console.log('取得請假資料：', detail);
+      getLeaveDetail(leaveId).then((detail) => {
         setData(detail);
-        setProxies(proxyList);
         setIsEditing(false);
         setFileName(detail.fileName || '');
+        const s = dayjs(detail.startDateTime);
+        const e = dayjs(detail.endDateTime);
+        setStartDate(s.startOf('day'));
+        setStartTime(s);
+        setEndDate(e.startOf('day'));
+        setEndTime(e);
+        setStart(s);
+        setEnd(e);
       });
     }
   }, [leaveId, open]);
 
-  const calculateLeaveHours = (startStr: string, endStr: string) => {
-    const start = dayjs(startStr);
-    const end = dayjs(endStr);
-    if (!start.isValid() || !end.isValid() || !end.isAfter(start)) return 0;
-
-    const startDay = start.startOf('day');
-    const endDay = end.startOf('day');
-    const dayDiff = endDay.diff(startDay, 'day');
-
-    let hours = 0;
-    if (dayDiff === 0) {
-      const startHour = Math.max(start.hour(), 9);
-      const endHour = Math.min(end.hour(), 18);
-      hours = endHour > startHour ? endHour - startHour : 0;
-    } else {
-      const firstDayHours = 18 - Math.max(start.hour(), 9);
-      const lastDayHours = Math.min(end.hour(), 18) - 9;
-      const fullDays = dayDiff - 1;
-      hours =
-        (firstDayHours > 0 ? firstDayHours : 0) +
-        (fullDays > 0 ? fullDays * 8 : 0) +
-        (lastDayHours > 0 ? lastDayHours : 0);
+  useEffect(() => {
+    if (startDate && startTime && endDate && endTime) {
+      const s = startDate.hour(startTime.hour()).minute(startTime.minute());
+      const e = endDate.hour(endTime.hour()).minute(endTime.minute());
+      setStart(s);
+      setEnd(e);
     }
-    return hours;
-  };
+  }, [startDate, startTime, endDate, endTime]);
+
+  useEffect(() => {
+    if (data && leaveHours !== data.leaveHours) {
+      setData({ ...data, leaveHours });
+    }
+  }, [leaveHours]);
 
   const handleChange = (field: string, value: any) => {
     const updated = { ...data, [field]: value };
-    if (field === 'startDateTime' || field === 'endDateTime') {
-      updated.leaveHours = calculateLeaveHours(updated.startDateTime, updated.endDateTime);
-    }
     setData(updated);
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selected = e.target.files?.[0] || null;
-    setFile(selected);
-    setFileName(selected?.name || '');
-  };
-
   const handleSubmit = async () => {
+    const formattedStart = start?.format('YYYY-MM-DDTHH:mm:ss');
+    const formattedEnd = end?.format('YYYY-MM-DDTHH:mm:ss');
+
     let uploadedPath = data.filePath;
     let uploadedName = data.fileName;
     if (file) {
@@ -92,15 +92,14 @@ export default function LeaveDetailDialog({ open, onClose, leaveId, onSuccess }:
     }
     const payload = {
       leaveTypeId: data.leaveTypeId,
-      startDateTime: data.startDateTime,
-      endDateTime: data.endDateTime,
-      leaveHours: data.leaveHours,
+      startDateTime: formattedStart,
+      endDateTime: formattedEnd,
+      leaveHours,
       reason: data.reason,
       proxyEmployeeCode: data.proxyEmployeeCode ?? '',
       filePath: uploadedPath,
       fileName: uploadedName,
     };
-    console.log('送出更新資料：', payload);
     await updateLeave(leaveId!, payload);
     onSuccess();
     onClose();
@@ -112,96 +111,104 @@ export default function LeaveDetailDialog({ open, onClose, leaveId, onSuccess }:
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
       <DialogTitle>請假紀錄詳情</DialogTitle>
       <DialogContent dividers>
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <Typography variant="caption">申請人</Typography>
-            <Typography>{data.employeeName}</Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="caption">假別</Typography>
-            <Typography>{data.leaveTypeName}</Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="caption">開始時間</Typography>
-            {isEditing ? (
-              <TextField
-                fullWidth
-                type="datetime-local"
-                value={dayjs(data.startDateTime).format('YYYY-MM-DDTHH:mm')}
-                onChange={(e) => handleChange('startDateTime', e.target.value)}
-              />
-            ) : (
-              <Typography>{dayjs(data.startDateTime).format('YYYY/MM/DD HH:mm')}</Typography>
-            )}
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="caption">結束時間</Typography>
-            {isEditing ? (
-              <TextField
-                fullWidth
-                type="datetime-local"
-                value={dayjs(data.endDateTime).format('YYYY-MM-DDTHH:mm')}
-                onChange={(e) => handleChange('endDateTime', e.target.value)}
-                InputLabelProps={{ shrink: true }}
-              />
-            ) : (
-              <Typography>{dayjs(data.endDateTime).format('YYYY/MM/DD HH:mm')}</Typography>
-            )}
-          </Grid>
-          <Grid item xs={12}>
-            <Typography variant="caption">請假時數</Typography>
-            <Typography>{data.leaveHours} 小時</Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Typography variant="caption">請假原因</Typography>
-            {isEditing ? (
-              <TextField
-                fullWidth
-                value={data.reason}
-                onChange={(e) => handleChange('reason', e.target.value)}
-                multiline
-                rows={3}
-              />
-            ) : (
-              <Typography>{data.reason || '—'}</Typography>
-            )}
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="caption">代理人</Typography>
-            {isEditing ? (
-              <Select
-                fullWidth
-                value={data.proxyEmployeeCode || ''}
-                onChange={(e) => handleChange('proxyEmployeeCode', e.target.value)}
-              >
-                <MenuItem value="">- 請選擇 -</MenuItem>
-                {proxies.map((p) => (
-                  <MenuItem key={p.employeeCode} value={p.employeeCode}>
-                    {p.employeeName}
-                  </MenuItem>
-                ))}
-              </Select>
-            ) : (
-              <Typography>{data.proxyEmployeeName || '—'}</Typography>
-            )}
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="caption">審核人</Typography>
-            <Typography>{data.approverEmployeeName || '—'}</Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Typography variant="caption">附件</Typography>
-            <Stack direction="row" alignItems="center" spacing={1}>
-              {isEditing && (
-                <Button variant="outlined" component="label" size="small">
-                  重新上傳
-                  <input type="file" hidden onChange={handleFileChange} />
-                </Button>
-              )}
-              <Typography variant="body2">{fileName || data.fileName || '未選擇檔案'}</Typography>
-            </Stack>
-          </Grid>
-        </Grid>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <Typography variant="caption">申請人</Typography>
+          <Typography gutterBottom>{data.employeeName}</Typography>
+
+          <Typography variant="caption">假別</Typography>
+          <Typography gutterBottom>{data.leaveTypeName}</Typography>
+
+          <Typography variant="caption">開始時間</Typography>
+          {isEditing ? (
+            <LeaveTimePickerGroup
+              label=""
+              date={startDate}
+              time={startTime}
+              setDate={setStartDate}
+              setTime={setStartTime}
+              disableDate={(d) =>
+                holidays.includes(d.format('YYYY-MM-DD')) || d.day() === 0 || d.day() === 6
+              }
+            />
+          ) : (
+            <Typography gutterBottom>
+              {dayjs(data.startDateTime).format('YYYY/MM/DD HH:mm')}
+            </Typography>
+          )}
+
+          <Typography variant="caption">結束時間</Typography>
+          {isEditing ? (
+            <LeaveTimePickerGroup
+              label=""
+              date={endDate}
+              time={endTime}
+              setDate={setEndDate}
+              setTime={setEndTime}
+              disableDate={(d) =>
+                holidays.includes(d.format('YYYY-MM-DD')) || d.day() === 0 || d.day() === 6
+              }
+            />
+          ) : (
+            <Typography gutterBottom>
+              {dayjs(data.endDateTime).format('YYYY/MM/DD HH:mm')}
+            </Typography>
+          )}
+
+          <Typography variant="caption">請假時數</Typography>
+          <Typography gutterBottom>{leaveHours} 小時</Typography>
+
+          <Typography variant="caption">請假原因</Typography>
+          {isEditing ? (
+            <TextField
+              fullWidth
+              value={data.reason}
+              onChange={(e) => handleChange('reason', e.target.value)}
+              multiline
+              rows={3}
+              size="small"
+              sx={{ mb: 2 }}
+            />
+          ) : (
+            <Typography gutterBottom>{data.reason || '—'}</Typography>
+          )}
+
+          <Typography variant="caption">代理人</Typography>
+          {isEditing ? (
+            <Select
+              fullWidth
+              size="small"
+              value={data.proxyEmployeeCode || ''}
+              onChange={(e) => handleChange('proxyEmployeeCode', e.target.value)}
+              sx={{ mb: 2 }}
+            >
+              <MenuItem value="">- 請選擇 -</MenuItem>
+              {proxies.map((p) => (
+                <MenuItem key={p.employeeCode} value={p.employeeCode}>
+                  {p.employeeName}
+                </MenuItem>
+              ))}
+            </Select>
+          ) : (
+            <Typography gutterBottom>{data.proxyEmployeeName || '—'}</Typography>
+          )}
+
+          <Typography variant="caption">審核人</Typography>
+          <Typography gutterBottom>{data.approverEmployeeName || '—'}</Typography>
+
+          <Typography variant="caption">附件</Typography>
+          {isEditing ? (
+            <FileUploadButton
+              file={file}
+              fileName={fileName}
+              onFileChange={(f) => {
+                setFile(f);
+                setFileName(f?.name || '');
+              }}
+            />
+          ) : (
+            <Typography gutterBottom>{fileName || data.fileName || '未選擇檔案'}</Typography>
+          )}
+        </LocalizationProvider>
       </DialogContent>
       <DialogActions sx={{ justifyContent: 'flex-end' }}>
         {!isEditing ? (
