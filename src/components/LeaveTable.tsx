@@ -60,6 +60,7 @@ export default function LeaveTable({ data, onRowClick }: Props) {
               <TableCell>
                 <Tooltip title={row.reason || ''}>
                   <Typography
+                    variant="body2"
                     sx={{
                       maxWidth: 200,
                       whiteSpace: 'nowrap',
@@ -74,6 +75,7 @@ export default function LeaveTable({ data, onRowClick }: Props) {
               <TableCell>
                 <Tooltip title={row.approvalReason || ''}>
                   <Typography
+                    variant="body2"
                     sx={{
                       maxWidth: 200,
                       whiteSpace: 'nowrap',
