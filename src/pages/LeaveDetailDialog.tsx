@@ -9,6 +9,7 @@ import {
   TextField,
   Select,
   MenuItem,
+  DialogContentText,
 } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -37,6 +38,7 @@ export default function LeaveDetailDialog({ open, onClose, leaveId, onSuccess }:
   const [endTime, setEndTime] = useState<Dayjs | null>(null);
   const [start, setStart] = useState<Dayjs | null>(null);
   const [end, setEnd] = useState<Dayjs | null>(null);
+  const [confirmCancelOpen, setConfirmCancelOpen] = useState(false);
 
   const { proxies, holidays } = useProxiesAndHolidays();
   const leaveHours = useLeaveHoursCalculator(start, end, holidays);
@@ -108,130 +110,160 @@ export default function LeaveDetailDialog({ open, onClose, leaveId, onSuccess }:
   if (!data) return null;
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
-      <DialogTitle>請假紀錄詳情</DialogTitle>
-      <DialogContent dividers>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <Typography variant="caption">申請人</Typography>
-          <Typography gutterBottom>{data.employeeName}</Typography>
+    <>
+      <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
+        <DialogTitle>請假紀錄詳情</DialogTitle>
+        <DialogContent dividers>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <Typography variant="caption">申請人</Typography>
+            <Typography gutterBottom>{data.employeeName}</Typography>
 
-          <Typography variant="caption">假別</Typography>
-          <Typography gutterBottom>{data.leaveTypeName}</Typography>
+            <Typography variant="caption">假別</Typography>
+            <Typography gutterBottom>{data.leaveTypeName}</Typography>
 
-          <Typography variant="caption">開始時間</Typography>
-          {isEditing ? (
-            <LeaveTimePickerGroup
-              label=""
-              date={startDate}
-              time={startTime}
-              setDate={setStartDate}
-              setTime={setStartTime}
-              disableDate={(d) =>
-                holidays.includes(d.format('YYYY-MM-DD')) || d.day() === 0 || d.day() === 6
-              }
-            />
+            <Typography variant="caption">開始時間</Typography>
+            {isEditing ? (
+              <LeaveTimePickerGroup
+                label=""
+                date={startDate}
+                time={startTime}
+                setDate={setStartDate}
+                setTime={setStartTime}
+                disableDate={(d) =>
+                  holidays.includes(d.format('YYYY-MM-DD')) || d.day() === 0 || d.day() === 6
+                }
+              />
+            ) : (
+              <Typography gutterBottom>
+                {dayjs(data.startDateTime).format('YYYY/MM/DD HH:mm')}
+              </Typography>
+            )}
+
+            <Typography variant="caption">結束時間</Typography>
+            {isEditing ? (
+              <LeaveTimePickerGroup
+                label=""
+                date={endDate}
+                time={endTime}
+                setDate={setEndDate}
+                setTime={setEndTime}
+                disableDate={(d) =>
+                  holidays.includes(d.format('YYYY-MM-DD')) || d.day() === 0 || d.day() === 6
+                }
+              />
+            ) : (
+              <Typography gutterBottom>
+                {dayjs(data.endDateTime).format('YYYY/MM/DD HH:mm')}
+              </Typography>
+            )}
+
+            <Typography variant="caption">請假時數</Typography>
+            <Typography gutterBottom>{leaveHours} 小時</Typography>
+
+            <Typography variant="caption">請假原因</Typography>
+            {isEditing ? (
+              <TextField
+                fullWidth
+                value={data.reason}
+                onChange={(e) => handleChange('reason', e.target.value)}
+                multiline
+                rows={3}
+                size="small"
+                sx={{ mb: 2 }}
+              />
+            ) : (
+              <Typography gutterBottom>{data.reason || '—'}</Typography>
+            )}
+
+            <Typography variant="caption">代理人</Typography>
+            {isEditing ? (
+              <Select
+                fullWidth
+                size="small"
+                value={data.proxyEmployeeCode || ''}
+                onChange={(e) => handleChange('proxyEmployeeCode', e.target.value)}
+                sx={{ mb: 2 }}
+              >
+                <MenuItem value="">- 請選擇 -</MenuItem>
+                {proxies.map((p) => (
+                  <MenuItem key={p.employeeCode} value={p.employeeCode}>
+                    {p.employeeName}
+                  </MenuItem>
+                ))}
+              </Select>
+            ) : (
+              <Typography gutterBottom>{data.proxyEmployeeName || '—'}</Typography>
+            )}
+
+            <Typography variant="caption">審核人</Typography>
+            <Typography gutterBottom>{data.approverEmployeeName || '—'}</Typography>
+
+            <Typography variant="caption">附件</Typography>
+            {isEditing ? (
+              <FileUploadButton
+                file={file}
+                fileName={fileName}
+                onFileChange={(f) => {
+                  setFile(f);
+                  setFileName(f?.name || '');
+                }}
+              />
+            ) : (
+              <Typography gutterBottom>{fileName || data.fileName || '未選擇檔案'}</Typography>
+            )}
+          </LocalizationProvider>
+        </DialogContent>
+        <DialogActions sx={{ justifyContent: 'flex-end' }}>
+          {!isEditing ? (
+            <>
+              <Button
+                onClick={() => setIsEditing(true)}
+                disabled={data.status !== '待審核'}
+                variant="outlined"
+              >
+                編輯
+              </Button>
+              <Button onClick={onClose}>關閉</Button>
+            </>
           ) : (
-            <Typography gutterBottom>
-              {dayjs(data.startDateTime).format('YYYY/MM/DD HH:mm')}
-            </Typography>
+            <>
+              <Button onClick={() => setIsEditing(false)}>取消</Button>
+              <Button onClick={handleSubmit} variant="contained">
+                儲存
+              </Button>
+              <Button onClick={onClose}>關閉</Button>
+            </>
           )}
-
-          <Typography variant="caption">結束時間</Typography>
-          {isEditing ? (
-            <LeaveTimePickerGroup
-              label=""
-              date={endDate}
-              time={endTime}
-              setDate={setEndDate}
-              setTime={setEndTime}
-              disableDate={(d) =>
-                holidays.includes(d.format('YYYY-MM-DD')) || d.day() === 0 || d.day() === 6
-              }
-            />
-          ) : (
-            <Typography gutterBottom>
-              {dayjs(data.endDateTime).format('YYYY/MM/DD HH:mm')}
-            </Typography>
-          )}
-
-          <Typography variant="caption">請假時數</Typography>
-          <Typography gutterBottom>{leaveHours} 小時</Typography>
-
-          <Typography variant="caption">請假原因</Typography>
-          {isEditing ? (
-            <TextField
-              fullWidth
-              value={data.reason}
-              onChange={(e) => handleChange('reason', e.target.value)}
-              multiline
-              rows={3}
-              size="small"
-              sx={{ mb: 2 }}
-            />
-          ) : (
-            <Typography gutterBottom>{data.reason || '—'}</Typography>
-          )}
-
-          <Typography variant="caption">代理人</Typography>
-          {isEditing ? (
-            <Select
-              fullWidth
-              size="small"
-              value={data.proxyEmployeeCode || ''}
-              onChange={(e) => handleChange('proxyEmployeeCode', e.target.value)}
-              sx={{ mb: 2 }}
-            >
-              <MenuItem value="">- 請選擇 -</MenuItem>
-              {proxies.map((p) => (
-                <MenuItem key={p.employeeCode} value={p.employeeCode}>
-                  {p.employeeName}
-                </MenuItem>
-              ))}
-            </Select>
-          ) : (
-            <Typography gutterBottom>{data.proxyEmployeeName || '—'}</Typography>
-          )}
-
-          <Typography variant="caption">審核人</Typography>
-          <Typography gutterBottom>{data.approverEmployeeName || '—'}</Typography>
-
-          <Typography variant="caption">附件</Typography>
-          {isEditing ? (
-            <FileUploadButton
-              file={file}
-              fileName={fileName}
-              onFileChange={(f) => {
-                setFile(f);
-                setFileName(f?.name || '');
-              }}
-            />
-          ) : (
-            <Typography gutterBottom>{fileName || data.fileName || '未選擇檔案'}</Typography>
-          )}
-        </LocalizationProvider>
-      </DialogContent>
-      <DialogActions sx={{ justifyContent: 'flex-end' }}>
-        {!isEditing ? (
-          <>
-            <Button
-              onClick={() => setIsEditing(true)}
-              disabled={data.status !== '待審核'}
-              variant="outlined"
-            >
-              編輯
+          {data.status === '待審核' && (
+            <Button color="error" onClick={() => setConfirmCancelOpen(true)}>
+              取消請假
             </Button>
-            <Button onClick={onClose}>關閉</Button>
-          </>
-        ) : (
-          <>
-            <Button onClick={() => setIsEditing(false)}>取消</Button>
-            <Button onClick={handleSubmit} variant="contained">
-              儲存
-            </Button>
-            <Button onClick={onClose}>關閉</Button>
-          </>
-        )}
-      </DialogActions>
-    </Dialog>
+          )}
+        </DialogActions>
+      </Dialog>
+      <Dialog open={confirmCancelOpen} onClose={() => setConfirmCancelOpen(false)}>
+        <DialogTitle>確認取消請假</DialogTitle>
+        <DialogContent>
+          <DialogContentText>你確定要取消這筆請假申請嗎？此操作無法復原。</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmCancelOpen(false)}>返回</Button>
+          <Button
+            onClick={async () => {
+              const cancelPayload = { ...data, status: '已取消' };
+              console.log('Cancel Payload:', cancelPayload);
+              await updateLeave(leaveId!, cancelPayload);
+              setConfirmCancelOpen(false);
+              onSuccess();
+              onClose();
+            }}
+            color="error"
+            variant="contained"
+          >
+            確定取消
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 }
