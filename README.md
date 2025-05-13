@@ -1,80 +1,101 @@
-# Attendance-System Frontend
+# Attendance System Frontend
 
-這是一個使用 Vite + React 製作的前端專案，負責串接考勤管理系統的後端 API。
+這是一個使用 React + TypeScript + Vite 開發的考勤系統前端專案。
 
-> 後端專案與資料庫 docker-compose 參見
+## Tech Stack
 
-> [Attendance-System-API](https://github.com/JunTingLin/Attendance-System-API)
+- React 19
+- TypeScript
+- Vite
+- Material-UI (MUI)
+- React Router DOM
+- Axios
+- Day.js
+- ESLint + Prettier
 
-> [Attendance-System-db](https://github.com/JunTingLin/Attendance-System-db)
-
----
-
-## 專案結構說明
+## 專案結構
 
 ```
-Attendance-System_frontend/
-├── public/
-├── src/
-│   ├── api/                 # API 呼叫函式
-│   ├── components/          # 公用元件 (ex: Layout側邊欄)
-│   ├── pages/               # 各個頁面
-│   ├── types/               # 類別定義 (ex: EmployeeDTO)
-│   ├── App.tsx              # 頁面路徑總入口
-│   └── main.tsx             # React 入口
-├── .env                     # 環境變數設定（開發完成才加入此檔案）
-├── package.json             # 專案設定與依賴
-├── tsconfig.json            # TypeScript 設定
-└── vite.config.ts           # Vite 設定
+attendance-system-frontend/
+├── src/                    # 源代碼目錄
+│   ├── api/               # API 相關配置和請求
+│   ├── assets/            # 靜態資源文件
+│   ├── components/        # 可重用的 React 組件
+│   ├── hooks/             # 自定義 React Hooks
+│   ├── pages/             # 頁面組件
+│   ├── types/             # TypeScript 類型定義
+│   └── utils/             # 工具函數
+├── public/                # 靜態公共資源目錄
+├── node_modules/          # 依賴包目錄
+├── .vscode/              # VSCode 配置目錄
+├── package.json          # 專案配置和依賴管理
+├── package-lock.json     # 依賴版本鎖定文件
+├── tsconfig.json         # TypeScript 配置
+├── tsconfig.app.json     # 應用程式 TypeScript 配置
+├── tsconfig.node.json    # Node.js TypeScript 配置
+├── vite.config.ts        # Vite 構建工具配置
+├── eslint.config.js      # ESLint 代碼檢查配置
+├── prettier.config.cjs   # Prettier 代碼格式化配置
+└── index.html            # 應用程式入口 HTML 文件
 ```
 
----
+## 本地開發環境設置
 
-## 基本啟動指令
+### 前置需求
 
-1. 安裝套件
+- Node.js (建議使用 v18 或更高版本)
+- npm 或 yarn
 
-   ```bash
-   npm install
-   ```
+### 安裝步驟
 
-2. 啟動開發伺服器
+1. Clone專案
+```bash
+git clone [https://github.com/zzronggg/Attendance-System-frontend.git]
+cd attendance-system-frontend
+```
 
-   ```bash
-   npm run dev
-   ```
+2. 安裝依賴
+```bash
+npm install
+# 或
+yarn install
+```
 
-3. (可選) 打包專案
+3. 啟動開發服務器
+```bash
+npm run dev
+# 或
+yarn dev
+```
 
-   ```bash
-   npm run build
-   ```
+開發服務器將在 http://localhost:5173 啟動。
 
----
+### 其他可用的腳本
 
-## 頁面路徑設計
+- `npm run build` - 構建生產環境版本
+- `npm run preview` - 預覽生產環境構建
+- `npm run lint` - 運行 ESLint 檢查
+- `npm run format` - 使用 Prettier 格式化代碼
 
-| Path            | 對應頁面   | 是否需要登入 |
-| --------------- | ---------- | ------------ |
-| `/login`        | 登入頁面   | 否           |
-| `/employee`     | 員工資料頁 | 是           |
-| `/leave`        | 請假申請表 | 是           |
-| `/leave-manage` | 假單管理   | 是           |
+## 開發指南
 
-- 如果尚未登入，訪問需要登入的頁面會自動跳轉到 `/login`。
-- 成功登入後會被導向 `/employee`。
-
----
+- 使用 TypeScript 進行開發，確保類型安全
+- 遵循 ESLint 和 Prettier 的程式碼風格規範
+- 組件開發遵循 React 最佳實踐
+- 使用 Material-UI 組件庫保持 UI 一致性
 
 ## 注意事項
 
-- API 伺服器網址應該設定在 `.env` 裡（目前暫未使用此方式設置），例如：
-  ```bash
-  VITE_API_URL=http://localhost:8080
-  ```
-- 前端透過 `Authorization: Bearer {token}` 把登入後的 JWT token 加到每個 API 請求裡。
-- 頁面切換使用 `react-router-dom v6`，統一用 `<Routes>` 與 `<Route>` 配置。
+- 確保後端 API 服務器正在運行
+- 開發時請注意跨域問題的處理
+- 遵循專案的 Git 提交規範
 
+## 環境變數配置
+
+在專案根目錄創建 `.env` 文件，並設置以下環境變數：
+
+```bash
+VITE_API_URL=http://localhost:8080
 ```
 
-```
+這個環境變數用於配置後端 API 的基礎 URL。在開發環境中，請確保這個 URL 指向正確的後端服務地址。
