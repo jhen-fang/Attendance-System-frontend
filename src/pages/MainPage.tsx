@@ -85,7 +85,7 @@ export default function MainPage() {
           </Typography>
           <Grid container spacing={2}>
             {leaveTypes.map((lt) => (
-              <Grid item xs={4} key={lt.id}>
+              <Grid item xs={4} key={lt.id} component="div" {...({} as any)}>
                 <Paper
                   sx={{ p: 2, textAlign: 'center', backgroundColor: '#0d6efd', color: 'white' }}
                 >
@@ -101,7 +101,7 @@ export default function MainPage() {
           </Typography>
 
           <Grid container spacing={2} sx={{ mb: 2 }}>
-            <Grid item xs={12} sm={4} md={3}>
+            <Grid item xs={12} sm={4} md={3} component="div" {...({} as any)}>
               <FormControl fullWidth size="small">
                 <InputLabel>篩選假別</InputLabel>
                 <Select
@@ -118,7 +118,7 @@ export default function MainPage() {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={4} md={3}>
+            <Grid item xs={12} sm={4} md={3} component="div" {...({} as any)}>
               <FormControl fullWidth size="small">
                 <InputLabel>申請狀態</InputLabel>
                 <Select

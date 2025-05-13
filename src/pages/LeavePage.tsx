@@ -36,7 +36,7 @@ export default function LeavePage() {
   const [proxyCode, setProxyCode] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [fileName, setFileName] = useState('');
-  const [filePath, setFilePath] = useState('');
+  const [, setFilePath] = useState('');
   const [successData, setSuccessData] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState('');
   const [maxHours, setMaxHours] = useState(0);
@@ -191,7 +191,6 @@ export default function LeavePage() {
           </Select>
 
           <FileUploadButton
-            file={file}
             fileName={fileName}
             onFileChange={(f) => {
               setFile(f);
