@@ -201,7 +201,6 @@ export default function LeaveDetailDialog({ open, onClose, leaveId, onSuccess }:
             <Typography variant="caption">附件</Typography>
             {isEditing ? (
               <FileUploadButton
-                file={file}
                 fileName={fileName}
                 onFileChange={(f) => {
                   setFile(f);
@@ -251,7 +250,6 @@ export default function LeaveDetailDialog({ open, onClose, leaveId, onSuccess }:
           <Button
             onClick={async () => {
               const cancelPayload = { ...data, status: '已取消' };
-              console.log('Cancel Payload:', cancelPayload);
               await updateLeave(leaveId!, cancelPayload);
               setConfirmCancelOpen(false);
               onSuccess();

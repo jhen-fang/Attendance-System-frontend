@@ -22,8 +22,8 @@ export default function LeaveTimePickerGroup({
   return (
     <>
       <label style={{ fontWeight: 600 }}>{label}</label>
-      <Grid container spacing={2} sx={{ my: 1 }}>
-        <Grid item xs={6}>
+      <Grid container spacing={2} sx={{ my: 1 }} component="div">
+        <Grid item xs={6} component="div" {...({} as any)}>
           <DatePicker
             label="日期"
             value={date}
@@ -32,7 +32,7 @@ export default function LeaveTimePickerGroup({
             slotProps={{ textField: { size: 'small', fullWidth: true } }}
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={6} component="div" {...({} as any)}>
           <TimePicker
             label="時間"
             value={time}

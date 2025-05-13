@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import LeaveReviewDialog from './LeaveReviewDialog';
 import {
   Table,
@@ -10,15 +10,12 @@ import {
   Paper,
   Chip,
   Typography,
-  Link,
 } from '@mui/material';
 import { getAllLeaves } from '../api/manager';
-import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 
 const LeaveManage = () => {
   const [leaveData, setLeaveData] = useState([]);
-  const navigate = useNavigate();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<any>(null);
   const [approvalReason, setApprovalReason] = useState('');

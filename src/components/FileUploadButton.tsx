@@ -2,12 +2,11 @@ import { Button, Typography, Stack } from '@mui/material';
 import React from 'react';
 
 interface Props {
-  file: File | null;
   fileName: string;
   onFileChange: (f: File | null) => void;
 }
 
-export default function FileUploadButton({ file, fileName, onFileChange }: Props) {
+export default function FileUploadButton({ fileName, onFileChange }: Props) {
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0] || null;
     onFileChange(selected);
