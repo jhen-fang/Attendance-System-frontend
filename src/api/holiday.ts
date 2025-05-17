@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 
 export const getTaiwanHolidays = async (): Promise<Date[]> => {
   const res = await axios.get(
-    `${import.meta.env.VITE_API_HOLIDAYS_BASE}/api/datasets/308dcd75-6434-45bc-a95f-584da4fed251/json?size=1000`,
+    `https://data.ntpc.gov.tw/api/datasets/308dcd75-6434-45bc-a95f-584da4fed251/json?size=1000`,
   );
   const raw = res.data;
 
