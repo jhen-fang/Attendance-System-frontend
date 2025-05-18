@@ -2,6 +2,18 @@ options:
   logging: CLOUD_LOGGING_ONLY
 
 steps:
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        echo "🧾 Commit info:"
+        git log -n 1
+        echo "📁 Root file list:"
+        ls -lh
+        echo "📄 index.html preview (from repo):"
+        cat index.html || echo "❌ index.html not found"
+
   - name: node
     entrypoint: npm
     args: ['install']
