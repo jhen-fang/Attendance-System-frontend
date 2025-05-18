@@ -6,13 +6,25 @@ steps:
     entrypoint: npm
     args: ['install']
 
-  - name: node
+  # - name: node
+  #   entrypoint: bash
+  #   args:
+  #     - -c
+  #     - |
+  #       echo "Using VITE_API_BASE_URL=$$VITE_API_BASE_URL"
+  #       VITE_API_BASE_URL=$$VITE_API_BASE_URL npm run build
+  #   secretEnv: ['VITE_API_BASE_URL']
+
+   - name: node
     entrypoint: bash
     args:
       - -c
       - |
-        echo "Using VITE_API_BASE_URL=$$VITE_API_BASE_URL"
-        VITE_API_BASE_URL=$$VITE_API_BASE_URL npm run build
+        set -e
+        echo "VITE_API_BASE_URL: ${VITE_API_BASE_URL}"
+        VITE_API_BASE_URL=${VITE_API_BASE_URL} npm run build
+        echo "Build Finished,dist/ ："
+        ls -lh dist/
     secretEnv: ['VITE_API_BASE_URL']
 
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk
@@ -22,6 +34,7 @@ steps:
       - |
         gsutil -m rsync -r -c -d dist/ gs://attendance-frontend-static-site/
         gsutil cp dist/index.html gs://attendance-frontend-static-site/index.html
+        echo "Deployed time: $(date)"
 
 availableSecrets:
   secretManager:
