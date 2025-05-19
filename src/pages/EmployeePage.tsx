@@ -19,12 +19,6 @@ function EmployeePage() {
           data.monthOfService = months;
         }
         setProfile(data);
-
-        const supervisor = await getSupervisor();
-        console.log('主管:', supervisor);
-
-        const proxies = await getProxies();
-        console.log('代理人:', proxies);
       } catch (err) {
         console.error('取得個人資料失敗', err);
         navigate('/login');
