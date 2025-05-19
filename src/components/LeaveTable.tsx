@@ -8,10 +8,12 @@ import {
   Paper,
   Tooltip,
   Typography,
+  IconButton,
 } from '@mui/material';
 import LeaveStatusChip from './LeaveStatusChip';
 import { downloadAttachment } from '../api/leave';
 import { formatDateTime } from '../utils/formats';
+import LinkIcon from '@mui/icons-material/Link';
 
 interface Props {
   data: any[];
@@ -88,9 +90,15 @@ export default function LeaveTable({ data, onRowClick }: Props) {
               </TableCell>
               <TableCell>{row.proxyEmployeeCode || '—'}</TableCell>
               <TableCell>{row.proxyEmployeeName || '—'}</TableCell>
-              <TableCell>
+              <TableCell align="center">
                 {row.fileName ? (
-                  <button onClick={() => downloadAttachment(row.fileName)}>🔗</button>
+                  <IconButton
+                    color="primary"
+                    onClick={() => downloadAttachment(row.fileName)}
+                    aria-label="下載附件"
+                  >
+                    <LinkIcon />
+                  </IconButton>
                 ) : (
                   '—'
                 )}
