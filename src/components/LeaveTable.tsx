@@ -94,7 +94,7 @@ export default function LeaveTable({ data, onRowClick }: Props) {
                 {row.fileName ? (
                   <IconButton
                     color="primary"
-                    onClick={() => downloadAttachment(row.fileName)}
+                    onClick={() => downloadAttachment(row.filePath)}
                     aria-label="下載附件"
                   >
                     <LinkIcon />
