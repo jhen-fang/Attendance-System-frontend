@@ -24,3 +24,6 @@ dist-ssr
 *.sln
 *.sw?
 
+.firebase/
+firebase-debug.log
+firebase.token

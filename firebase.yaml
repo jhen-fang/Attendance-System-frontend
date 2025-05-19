@@ -1,0 +1,40 @@
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+steps:
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        echo "Commit info:"
+        git log -n 1
+        echo "Root file list:"
+        ls -lh
+
+  - name: 'node:18'
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        echo "Using VITE_API_BASE_URL=$$VITE_API_BASE_URL"
+        npm install
+        VITE_API_BASE_URL=$$VITE_API_BASE_URL npm run build
+
+    secretEnv: ['VITE_API_BASE_URL']
+
+  - name: 'gcr.io/firebase-ci/firebase'
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        echo "Deploying to Firebase..."
+        firebase deploy --only hosting --token "$$FIREBASE_TOKEN"
+    secretEnv: ['FIREBASE_TOKEN']
+
+availableSecrets:
+  secretManager:
+    - versionName: projects/tsmc-attendance-system-458811/secrets/API_URL/versions/latest
+      env: 'VITE_API_BASE_URL'
+    - versionName: projects/tsmc-attendance-system-458811/secrets/FIREBASE_TOKEN/versions/latest
+      env: 'FIREBASE_TOKEN'
