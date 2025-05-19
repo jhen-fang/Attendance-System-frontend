@@ -37,13 +37,9 @@ export const uploadFile = async (file: File) => {
 };
 
 export const downloadAttachment = async (filename: string) => {
-  const res = await instance.post(
-    `/api/file/download/${filename}`,
-    {},
-    {
-      responseType: 'blob',
-    },
-  );
+  const res = await instance.get(`/api/file/download/${filename}`, {
+    responseType: 'blob',
+  });
 
   const blob = new Blob([res.data]);
   const downloadUrl = window.URL.createObjectURL(blob);
