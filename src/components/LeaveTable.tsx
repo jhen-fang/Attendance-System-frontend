@@ -8,7 +8,6 @@ import {
   Paper,
   Tooltip,
   Typography,
-  Link,
 } from '@mui/material';
 import LeaveStatusChip from './LeaveStatusChip';
 import { downloadAttachment } from '../api/leave';

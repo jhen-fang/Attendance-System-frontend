@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getEmployeeProfile, getProxies, getSupervisor } from '../api/employee';
+import { getEmployeeProfile } from '../api/employee';
 import { EmployeeDTO } from '../types/Employee';
 import dayjs from 'dayjs';
 import { Box, Typography, Chip, Paper, CircularProgress } from '@mui/material';
