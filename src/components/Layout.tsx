@@ -30,7 +30,7 @@ export default function Layout() {
     const token = localStorage.getItem('jwtToken');
     if (!token) return;
     axios
-      .get('http://localhost:8080/api/employee', {
+      .get(`${import.meta.env.VITE_API_BASE_URL}/api/employee`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
