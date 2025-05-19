@@ -23,7 +23,7 @@ steps:
 
     secretEnv: ['VITE_API_BASE_URL']
 
-  - name: 'gcr.io/firebase-ci/firebase'
+  - name: 'ghcr.io/w9jds/firebase-action'
     entrypoint: bash
     args:
       - -c
