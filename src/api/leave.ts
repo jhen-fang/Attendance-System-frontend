@@ -36,5 +36,20 @@ export const uploadFile = async (file: File) => {
   return res.data.data;
 };
 
-export const downloadAttachment = (filename: string) =>
-  `${instance.defaults.baseURL}/api/file/download/${filename}`;
+export const downloadAttachment = async (filename: string) => {
+  const res = await instance.post(
+    `/api/file/download/${filename}`,
+    {},
+    {
+      responseType: 'blob',
+    },
+  );
+
+  const blob = new Blob([res.data]);
+  const downloadUrl = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = downloadUrl;
+  a.download = filename;
+  a.click();
+  window.URL.revokeObjectURL(downloadUrl);
+};

@@ -91,9 +91,7 @@ export default function LeaveTable({ data, onRowClick }: Props) {
               <TableCell>{row.proxyEmployeeName || '—'}</TableCell>
               <TableCell>
                 {row.fileName ? (
-                  <Link href={downloadAttachment(row.fileName)} target="_blank" rel="noopener">
-                    🔗
-                  </Link>
+                  <button onClick={() => downloadAttachment(row.fileName)}>🔗</button>
                 ) : (
                   '—'
                 )}
