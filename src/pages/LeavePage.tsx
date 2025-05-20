@@ -160,7 +160,8 @@ export default function LeavePage() {
           />
 
           <Typography sx={{ mb: 2 }} color="text.secondary">
-            請假時數：{leaveHours} 小時（上限 {maxHours} 小時）
+            請假時數：{leaveHours} 小時
+            {leaveTypeId !== 4 && `（上限 ${maxHours} 小時）`}
           </Typography>
 
           <TextField

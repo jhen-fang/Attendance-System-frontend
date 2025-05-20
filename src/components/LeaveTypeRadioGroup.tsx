@@ -9,6 +9,7 @@ const leaveTypes = [
   { id: 1, label: '特休' },
   { id: 2, label: '病假' },
   { id: 3, label: '事假' },
+  { id: 4, label: '公假' },
 ];
 
 export default function LeaveTypeRadioGroup({ leaveTypeId, setLeaveTypeId }: Props) {

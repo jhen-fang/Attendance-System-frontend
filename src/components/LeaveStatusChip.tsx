@@ -8,9 +8,9 @@ export default function LeaveStatusChip({ status }: { status: string }) {
     case '已核准':
     case 'APPROVED':
       return <Chip label="已核准" color="success" />;
-    case '已拒絕':
+    case '已駁回':
     case 'REJECTED':
-      return <Chip label="已拒絕" color="error" />;
+      return <Chip label="已駁回" color="error" />;
     case '已取消':
     case 'CANCELED':
       return <Chip label="已取消" color="default" />;
