@@ -17,7 +17,7 @@ export function useLeaveHoursCalculator(
       const isWeekend = curr.day() === 0 || curr.day() === 6;
       const hour = curr.hour();
 
-      if (!isHoliday && !isWeekend && hour >= 9 && hour < 18) {
+      if (!isHoliday && !isWeekend && hour >= 9 && hour < 18 && hour !== 12) {
         hours += 1;
       }
 

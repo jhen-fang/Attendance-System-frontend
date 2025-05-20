@@ -26,7 +26,7 @@ const statuses = [
   { value: 'ALL', label: '全部' },
   { value: '待審核', label: '待審核' },
   { value: '已核准', label: '已核准' },
-  { value: '已拒絕', label: '已拒絕' },
+  { value: '已駁回', label: '已駁回' },
   { value: '已取消', label: '已取消' },
 ];
 

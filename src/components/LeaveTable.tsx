@@ -31,6 +31,7 @@ export default function LeaveTable({ data, onRowClick }: Props) {
             <TableCell sx={{ minWidth: 80 }}>申請時間</TableCell>
             <TableCell sx={{ minWidth: 60 }}>假別</TableCell>
             <TableCell sx={{ minWidth: 120 }}>審核時間</TableCell>
+            <TableCell sx={{ minWidth: 100 }}>申請狀態</TableCell>
             <TableCell sx={{ minWidth: 120 }}>請假時間</TableCell>
             <TableCell sx={{ minWidth: 120 }}>結束時間</TableCell>
             <TableCell sx={{ minWidth: 100 }}>請假時數</TableCell>
@@ -39,7 +40,6 @@ export default function LeaveTable({ data, onRowClick }: Props) {
             <TableCell sx={{ minWidth: 120 }}>代理人員編</TableCell>
             <TableCell sx={{ minWidth: 80 }}>代理人姓名</TableCell>
             <TableCell sx={{ minWidth: 60 }}>附件</TableCell>
-            <TableCell sx={{ minWidth: 100 }}>申請狀態</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -53,6 +53,9 @@ export default function LeaveTable({ data, onRowClick }: Props) {
               <TableCell>{row.applicationDateTime?.split('T')[0] || '—'}</TableCell>
               <TableCell>{row.leaveTypeName}</TableCell>
               <TableCell>{renderCell(row.approvalDatetime)}</TableCell>
+              <TableCell>
+                <LeaveStatusChip status={row.status} />
+              </TableCell>
               <TableCell>{renderCell(row.startDateTime)}</TableCell>
               <TableCell>{renderCell(row.endDateTime)}</TableCell>
               <TableCell>
@@ -102,9 +105,6 @@ export default function LeaveTable({ data, onRowClick }: Props) {
                 ) : (
                   '—'
                 )}
-              </TableCell>
-              <TableCell>
-                <LeaveStatusChip status={row.status} />
               </TableCell>
             </TableRow>
           ))}
