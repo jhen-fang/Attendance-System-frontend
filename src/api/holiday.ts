@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 
 export const getTaiwanHolidays = async (): Promise<Date[]> => {
   const res = await axios.get(
-    `https://us-central1-tsmc-attendance-system-458811.cloudfunctions.net/ntpcHolidays`,
+    `https://asia-east1-tsmc-attendance-system-458811.cloudfunctions.net/ntpcHolidays`,
   );
 
   const raw = res.data;
