@@ -76,6 +76,16 @@ firebase deploy
 - `projects/tsmc-attendance-system-458811/secrets/API_URL`
 - `projects/tsmc-attendance-system-458811/secrets/FIREBASE_TOKEN`
 
+## 自有網域綁定到 Firebase Hosting 
+1. 在 Firebase Console 新增自訂網域
++ 「連結自訂網域」（Add custom domain）
++ 輸入你要綁定的網域（例如 tsmc-attendance-system.junting.info)
++ 「重新導向至現有的網站」不須勾選
+
+2. 在 Firebase Console 取得 CNAME 資訊
++ Proxy status：務必選「DNS only」（灰色雲朵），才能讓 Firebase 正確驗證
+3. 在 Cloudflare 新增這個 CNAME
+
 ## 注意事項
 
 1. 部署前確保：
