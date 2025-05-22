@@ -6,8 +6,8 @@
 
 ### Firebase 專案資訊
 - 專案 ID: `tsmc-attendance-system-458811`
-- 部署環境: Firebase Hosting
-- 部署區域: asia-east1
+- 部署環境: Firebase Hosting（全球 CDN，自動佈建）
+- 後端 Functions 部署區域: `asia-east1`
 
 ### 主要配置文件
 1. `firebase.json` - Firebase 部署配置
