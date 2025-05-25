@@ -44,7 +44,7 @@ const LeaveReviewDialog: React.FC<LeaveReviewDialogProps> = ({
     endDateTime: string;
     leaveHours: number;
     reason: string;
-    proxyEmployeeId: number;
+    proxyEmployeeCode: string;
     proxyEmployeeName: string;
     fileName?: string;
     filePath?: string;
@@ -101,7 +101,7 @@ const LeaveReviewDialog: React.FC<LeaveReviewDialogProps> = ({
         <Typography>
           請假時數：{data.leaveHours} 小時 ({(data.leaveHours / 8).toFixed(1)} 天)
         </Typography>
-        <Typography>代理人員工編號：{data.proxyEmployeeId}</Typography>
+        <Typography>代理人員工編號：{data.proxyEmployeeCode}</Typography>
         <Typography>代理人姓名：{data.proxyEmployeeName}</Typography>
         <Typography>請假事由：{data.reason}</Typography>
         <Typography>
