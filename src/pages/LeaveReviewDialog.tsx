@@ -36,7 +36,7 @@ const LeaveReviewDialog: React.FC<LeaveReviewDialogProps> = ({
 }) => {
   const [data, setData] = useState<null | {
     leaveApplicationId: number;
-    employeeId: number;
+    employeeCode: string;
     employeeName: string;
     leaveTypeName: string;
     applicationDateTime: string;
@@ -92,7 +92,7 @@ const LeaveReviewDialog: React.FC<LeaveReviewDialogProps> = ({
             {error}
           </Alert>
         )}
-        <Typography>員工編號：{data.employeeId}</Typography>
+        <Typography>員工編號：{data.employeeCode}</Typography>
         <Typography>員工姓名：{data.employeeName}</Typography>
         <Typography>假別：{data.leaveTypeName}</Typography>
         <Typography>申請時間：{data.applicationDateTime}</Typography>
