@@ -12,6 +12,7 @@ import {
   Typography,
 } from '@mui/material';
 import { getAllLeaves } from '../api/manager';
+import { downloadAttachment } from '../api/leave';
 import dayjs from 'dayjs';
 
 const LeaveManage = () => {
@@ -41,9 +42,6 @@ const LeaveManage = () => {
     await reloadData();
     setDialogOpen(false);
   };
-
-  // download URL 產生器
-  const downloadAttachment = (fileName: string) => `/api/download/${fileName}`;
 
   useEffect(() => {
     reloadData();
