@@ -12,6 +12,7 @@ import {
   Typography,
 } from '@mui/material';
 import { getAllLeaves } from '../api/manager';
+import { downloadAttachment } from '../api/leave';
 import dayjs from 'dayjs';
 
 const LeaveManage = () => {
@@ -20,6 +21,11 @@ const LeaveManage = () => {
   const [selectedId, setSelectedId] = useState<any>(null);
   const [approvalReason, setApprovalReason] = useState('');
 
+  const reloadData = async () => {
+    const data = await getAllLeaves();
+    setLeaveData(data);
+  };
+
   // 點擊未審核按鈕時打開 dialog
   const handleOpenDialog = (leaveId: number) => {
     setSelectedId(leaveId);
@@ -27,25 +33,18 @@ const LeaveManage = () => {
   };
 
   // 審核邏輯
-  const handleApprove = () => {
-    // 執行核准邏輯
+  const handleApprove = async () => {
+    await reloadData();
     setDialogOpen(false);
   };
 
-  const handleReject = () => {
-    // 執行拒絕邏輯
+  const handleReject = async () => {
+    await reloadData();
     setDialogOpen(false);
   };
-
-  // download URL 產生器
-  const downloadAttachment = (fileName: string) => `/api/download/${fileName}`;
 
   useEffect(() => {
-    const fetchData = async () => {
-      const data = await getAllLeaves();
-      setLeaveData(data);
-    };
-    fetchData();
+    reloadData();
   }, []);
 
   const getStatusChip = (status: string, id: number) => {
@@ -83,6 +82,7 @@ const LeaveManage = () => {
         <Table size="small">
           <TableHead>
             <TableRow>
+            <TableCell sx={{ whiteSpace: 'nowrap' }}>員工姓名</TableCell>
               <TableCell sx={{ whiteSpace: 'nowrap' }}>申請時間</TableCell>
               <TableCell sx={{ whiteSpace: 'nowrap' }}>假別</TableCell>
               <TableCell sx={{ whiteSpace: 'nowrap' }}>請假時間</TableCell>
@@ -94,6 +94,7 @@ const LeaveManage = () => {
           <TableBody>
             {leaveData.map((row: any) => (
               <TableRow>
+                <TableCell>{row.employeeName}</TableCell>
                 <TableCell>{renderCell(row.applicationDateTime)}</TableCell>
                 <TableCell>{row.leaveTypeName || '—'}</TableCell>
                 <TableCell>{renderCell(row.startDateTime)}</TableCell>
